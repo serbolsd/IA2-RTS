@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <importproject>../geEngine.sln</importproject>
+    <includedir>
+        <dir name="D:/Trabajo/geEngine2017/geUtility/Include/"/>
+    </includedir>
+    <paths>
+        <dir name="D:/Trabajo/geEngine2017/geUtility/Source"/>
+    </paths>
+</project>
