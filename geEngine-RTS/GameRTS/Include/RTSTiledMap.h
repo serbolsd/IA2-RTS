@@ -141,11 +141,22 @@ class RTSTiledMap
       return m_TentativeCost;
     };
 
+    void 
+    setcolor(const sf::Color& color){
+      m_color = color;
+    };
    
+    sf::Color
+    getColor() {
+      return m_color;
+    };
+    bool m_bDrawing = false;
+
   private:
     uint8 m_idType;
     int8 m_cost;
     sf::Vector2f m_position;
+    sf::Color m_color = { 255,255,255,255 };
     MapTile* m_pParent=nullptr;
     int m_index=-1;
     int m_indexX=-1;
@@ -325,11 +336,23 @@ class RTSTiledMap
   void
   AstarSearch();
 
+  bool
+  isSearchFinish(const int x, const int y);
+
   void
   returnPath();
+
+  void
+  returnLinePath();
   
   void
   clearSearch();
+
+  void
+  backTracking();
+
+  void
+  updateTileColor();
 
  private:
   Vector2I m_mapSize;
@@ -350,6 +373,7 @@ class RTSTiledMap
 
   sf::CircleShape m_mouseInWindow;
 
+  MapTile* m_tileSelected = nullptr;
   int m_tileSelectedIndex = -1;
   int m_tileSelectedIndexX = -1;
   int m_tileSelectedIndexY = -1;
@@ -362,50 +386,47 @@ class RTSTiledMap
 
   const sf::Color m_selectingTileColor = { 0, 255, 125, 255 };
   const sf::Color m_tileStartColor = {0,255,255,255};
-  const sf::Color m_tileFinishColor = {255,255,0,255};
-  const sf::Color m_serchingTileColor = { 255, 255, 255, 255 };
+  const sf::Color m_tileFinishColor = {255,120,0,255};
+  const sf::Color m_serchingTileColor = { 200, 200, 255, 255 };
+  const sf::Color m_inStackTileColor = { 100, 100, 100, 255 };
   const sf::Color m_lastSerchingTileColor = { 0, 0, 0, 255 };
-  const sf::Color m_lastPathTileColor = { 255, 0, 255, 255 };
-
-  class estado {
-  public:
-    int indexX;  // Coordenada en x
-    int indexY;  // Coordenada en Y
-    int d;  // Distancia recorrida
-    float m_euristic;  // Distancia recorrida
-    int8 m_cost;  // Distancia recorrida
-    float m_TentativeCost;  // Distancia recorrida
-    MapTile* m_pParent;
-    estado(int tileIndexX, int tileIndexY, int8 cost=0,float tentativeCost=0,MapTile* parent=nullptr,const float&euristic=0) {     // Constructor
-      indexX = tileIndexX, indexY = tileIndexY, m_cost=cost, m_TentativeCost=tentativeCost, m_pParent=parent,m_euristic=euristic;
-    }
-  };
+  const sf::Color m_PathTileColor = { 200, 0, 255, 255 };
+  const sf::Color m_BTTileColor = { 255, 0, 0, 255 };
+  const sf::Color m_NormalTileColor = { 255, 255, 255, 255 };
 
   Vector<bool> m_mapGridVisited;           // Tiles visited
   Vector<MapTile*> m_mapSearchRegister;
-  const int movx[4] = { 1, -1, 0, 0 };    // Moves on X
-  const int movy[4] = { 0, 0, 1, -1 };    // Moves on Y
+  const int movx[8] = { 1, 1, 0,-1,-1,-1,  0,  1 };    // Moves on X
+  const int movy[8] = { 0,-1,-1,-1, 0, 1,  1,  1 };    // Moves on Y
 
   deque<MapTile*> m_pathStack;             // Cola con los estados del camino
-  Vector<MapTile*> m_mapPathRegisterTail;
+  deque<MapTile*> m_mapPathRegisterTail;
+  deque<MapTile*> m_mapPathRegisterTailForBT;
+  Vector<MapTile*> m_BTmapPathRegisterTail;
+  Vector<MapTile*> m_BTPathLine;
 
   bool m_bSearching = false;
   bool m_bGetPath = false;
+  bool m_bGetPathBT = false;
 
   float m_currenttimeToNext = 0.0f;
   float m_timeToNext = 0.0f;
 
   FrameVector<sf::Vertex> m_outLineTail;
-  MapTile* actual;
+  FrameVector<sf::Vertex> m_PathLineTail;
+  MapTile* actual=nullptr;
 
   Vector<MapTile> m_mapGridCopy;
   MapTile *m_pCurrentTailNode=nullptr;
+  MapTile *m_linePathTile =nullptr;
+  MapTile *m_pCurrentBTTailNode=nullptr;
   float m_euritic;
   EURISTIC_TYPE m_eEuristicType = EURISTIC_TYPE::EUCLIDEAN;
-  PATHFINDING m_ePathFinding = PATHFINDING::DEPTH;
+  PATHFINDING m_ePathFinding = PATHFINDING::BREADTH;
   std::multiset<MapTile*, CLessWeight> m_dijkstra;
   std::multiset<MapTile*, CLessF> m_aStar;
 
+  Vector2I m_lastPendiente = {0,0};
   float m_euristicRelevance = 1;
   float m_costRelevance = 1;
 };

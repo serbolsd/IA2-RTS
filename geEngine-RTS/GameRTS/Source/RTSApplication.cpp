@@ -41,7 +41,7 @@ static string g_AddOptionPreviw = g_AddList[0];
 static const char*
 g_PathList[]{ "Depth","Breadth","Best","Dijkstra","A*"};
 static int
-g_PathOption;
+g_PathOption=1;
 static string g_PathFindingOptionPreviw = g_PathList[1];
 static const char*
 g_EuristicList[]{ "Euclidian","Square"};

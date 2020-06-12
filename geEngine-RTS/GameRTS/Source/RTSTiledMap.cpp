@@ -176,11 +176,14 @@ sf::Vector2f RTSTiledMap::getMousePosOnRenderTarget()
 
 void RTSTiledMap::selecetStartTail()
 {
-  if (m_bSearching)
-    return;
+  if (nullptr != m_tileStart)
+  {
+    m_tileStart->setcolor(m_NormalTileColor);
+  }
   if (m_tileSelectedIndex >=0)
   {
     m_tileStart = &m_mapGridCopy[m_tileSelectedIndex];
+    m_tileStart->setcolor(m_tileStartColor);
     m_tileStartIndexX = m_tileSelectedIndexX;
     m_tileStartIndexY = m_tileSelectedIndexY;
   }
@@ -189,11 +192,13 @@ void RTSTiledMap::selecetStartTail()
 
 void RTSTiledMap::selecetFinalTail()
 {
-  if (m_bSearching)
-    return;
+  if (nullptr != m_tileFinish){
+    m_tileFinish->setcolor(m_NormalTileColor);
+  }
   if (m_tileSelectedIndex >= 0)
   {
     m_tileFinish = &m_mapGridCopy[m_tileSelectedIndex];
+    m_tileFinish->setcolor(m_tileFinishColor);
     m_tileFinishIndexX = m_tileSelectedIndexX;
     m_tileFinishIndexY = m_tileSelectedIndexY;
   }
@@ -238,8 +243,6 @@ void RTSTiledMap::startPathFinding()
 
 void RTSTiledMap::setEuristic(const int & i)
 {
-  if (m_bSearching)
-    return;
   switch (i)
   {
   case 0:
@@ -257,8 +260,6 @@ void RTSTiledMap::setEuristic(const int & i)
 
 void RTSTiledMap::setPathFinding(const int & i)
 {
-  if (m_bSearching)
-    return;
   if (i > 4)
   {
     return;
@@ -287,8 +288,6 @@ void RTSTiledMap::setPathFinding(const int & i)
 
 void RTSTiledMap::setTileType(const int & i)
 {
-  if (m_bSearching)
-    return;
   if (m_tileSelectedIndex >= 0)
   {
     switch (i)
@@ -319,43 +318,36 @@ void RTSTiledMap::setTileType(const int & i)
 
 void RTSTiledMap::drawTailOutline(const int & tailIndex,const sf::Color & outlineColor)
 {
-  sf::Vector2f tailPos = m_mapGrid[tailIndex].getPosition();
+  sf::Vector2f tailPos = m_mapGridCopy[tailIndex].getPosition();
+  if (m_outLineTail.size()<=0)
+  {
+    m_outLineTail.resize(5);
+  }
 #ifdef MAP_IS_ISOMETRIC
-  m_outLineTail[0].position.x = (tailPos.x - GameOptions::TILEHALFSIZE.x);
-  m_outLineTail[0].position.y = (tailPos.y);
-  m_outLineTail[0].color      = outlineColor;
+  m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
+  m_outLineTail[0].position.y = tailPos.y;
   m_outLineTail[1].position.x = tailPos.x;
-  m_outLineTail[1].position.y = (tailPos.y - GameOptions::TILEHALFSIZE.y);
-  m_outLineTail[1].color = outlineColor;
+  m_outLineTail[1].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
   m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
   m_outLineTail[2].position.y = tailPos.y;
-  m_outLineTail[2].color = outlineColor;
   m_outLineTail[3].position.x = tailPos.x;
   m_outLineTail[3].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+#else
+
+  m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
+  m_outLineTail[0].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+  m_outLineTail[1].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
+  m_outLineTail[1].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+  m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
+  m_outLineTail[2].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
+  m_outLineTail[3].position.x = tailPos.x - GameOptions::TILEHALFSIZE.y;
+  m_outLineTail[3].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
+#endif
+  m_outLineTail[0].color = outlineColor;
+  m_outLineTail[1].color = outlineColor;
+  m_outLineTail[2].color = outlineColor;
   m_outLineTail[3].color = outlineColor;
   m_outLineTail[4] = m_outLineTail[0];
-#else
-  m_outLineTail.push_back(sf::Vertex(
-    sf::Vector2f(static_cast<float>(tailSelectedX - GameOptions::TILEHALFSIZE.x),
-      static_cast<float>(tailSelectedY + GameOptions::TILEHALFSIZE.y)),
-    selectingTileColor));
-  m_outLineTail.push_back(sf::Vertex(
-    sf::Vector2f(static_cast<float>(tailSelectedX + GameOptions::TILEHALFSIZE.x),
-      static_cast<float>(tailSelectedY + GameOptions::TILEHALFSIZE.y)),
-    selectingTileColor));
-  m_outLineTail.push_back(sf::Vertex(
-    sf::Vector2f(static_cast<float>(tailSelectedX + GameOptions::TILEHALFSIZE.x),
-      static_cast<float>(tailSelectedY - GameOptions::TILEHALFSIZE.y)),
-    selectingTileColor));
-  m_outLineTail.push_back(sf::Vertex(
-    sf::Vector2f(static_cast<float>(tailSelectedX - GameOptions::TILEHALFSIZE.y),
-      static_cast<float>(tailSelectedY - GameOptions::TILEHALFSIZE.y)),
-    selectingTileColor));
-  m_outLineTail.push_back(sf::Vertex(
-    sf::Vector2f(static_cast<float>(tailSelectedX - GameOptions::TILEHALFSIZE.x),
-      static_cast<float>(tailSelectedY + GameOptions::TILEHALFSIZE.y)),
-    selectingTileColor));
-#endif
   m_pTarget->draw(&m_outLineTail[0], 5, sf::PrimitiveType::LinesStrip);
 }
 
@@ -364,9 +356,13 @@ void RTSTiledMap::BreadthFirstSearch()
   if (m_pathStack.empty())
   {
     m_bSearching = false;
+    clearSearch();
+    return;
   }
 
+  actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.front();       // Sacamos el estado a procesar
+  actual->setcolor(m_lastSerchingTileColor);
   int actualIndX = actual->getIndexGridX();
   int actualIndY = actual->getIndexGridY();
 
@@ -380,17 +376,14 @@ void RTSTiledMap::BreadthFirstSearch()
   m_mapSearchRegister.push_back(actual);
   m_pathStack.pop_front();                         // Sacamos ese estado de la cola
 
-  if (&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX] == m_tileFinish)
+  if (isSearchFinish(actualIndX, actualIndY))
   {
-    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x + m_tileFinishIndexX];
-    m_bSearching = false;
-    m_bGetPath = true;
     return;
   }
 
   m_mapGridVisited[actualIndY*m_mapSize.x + actualIndX] = true;    // Marcamos como visitada la casilla actual
 
-  for (int i = 4 - 1; i > -1; i--) {
+  for (int i = 0; i < 8; i++) {
     int nuevox = actualIndX + movx[i];
     int nuevoy = actualIndY + movy[i];
 
@@ -400,6 +393,7 @@ void RTSTiledMap::BreadthFirstSearch()
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX]);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
+        m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setcolor(m_inStackTileColor);
         m_pathStack.push_back(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
       }
     }
@@ -412,9 +406,13 @@ void RTSTiledMap::DepthFirstSearch()
   if (m_pathStack.empty())
   {
     m_bSearching = false;
+    clearSearch();
+    return;
   }
 
+  actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.back();       // Sacamos el estado a procesar
+  actual->setcolor(m_lastSerchingTileColor);
 
   int actualIndX = actual->getIndexGridX();
   int actualIndY = actual->getIndexGridY();
@@ -422,17 +420,14 @@ void RTSTiledMap::DepthFirstSearch()
   m_mapSearchRegister.push_back(actual);
   m_pathStack.pop_back();                         // Sacamos ese estado de la cola
 
-  if (&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX] == m_tileFinish)
-  { 
-    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x +m_tileFinishIndexX];
-    m_bSearching = false;
-    m_bGetPath = true;
+  if (isSearchFinish(actualIndX, actualIndY))
+  {
     return;
   }
 
   m_mapGridVisited[actualIndY*m_mapSize.x + actualIndX] = true;    // Marcamos como visitada la casilla actual
 
-  for (int i = 4-1; i > -1; i--) {           
+  for (int i = 8-1; i > -1; i--) {           
     int nuevox = actualIndX + movx[i];    
     int nuevoy = actualIndY + movy[i];    
 
@@ -442,6 +437,7 @@ void RTSTiledMap::DepthFirstSearch()
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX]);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
+        m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setcolor(m_inStackTileColor);
         m_pathStack.push_back(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
       }
     }
@@ -454,9 +450,13 @@ void RTSTiledMap::BestFirstSearch()
   if (m_pathStack.empty())
   {
     m_bSearching = false;
+    clearSearch();
+    return;
   }
 
+  actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.front();       // Sacamos el estado a procesar
+  actual->setcolor(m_lastSerchingTileColor);
   
   int actualIndX = actual->getIndexGridX();
   int actualIndY = actual->getIndexGridY();
@@ -464,17 +464,14 @@ void RTSTiledMap::BestFirstSearch()
   m_mapSearchRegister.push_back(actual);
   m_pathStack.pop_front();                         // Sacamos ese estado de la cola
 
-  if (&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX] == m_tileFinish)
+  if (isSearchFinish(actualIndX, actualIndY))
   {
-    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x + m_tileFinishIndexX];
-    m_bSearching = false;
-    m_bGetPath = true;
     return;
   }
 
   m_mapGridVisited[actualIndY*m_mapSize.x + actualIndX] = true;    // Marcamos como visitada la casilla actual
   vector<MapTile*> Nodes;
-  for (int i = 4 - 1; i > -1; i--) {
+  for (int i = 0; i < 8; i++) {
     int nuevox = actualIndX + movx[i];
     int nuevoy = actualIndY + movy[i];
 
@@ -486,6 +483,7 @@ void RTSTiledMap::BestFirstSearch()
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setEuristic(eu);
+        m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setcolor(m_inStackTileColor);
         Nodes.push_back(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
       }
     }
@@ -520,47 +518,52 @@ void RTSTiledMap::DijkstraSearch()
   m_mapSearchRegister.push_back(actual);
   //m_pathStack.pop_front();                         // Sacamos ese estado de la cola
   
-  if (&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX] == m_tileFinish)
+  if (isSearchFinish(actualIndX, actualIndY))
   {
-    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x + m_tileFinishIndexX];
-    m_bSearching = false;
-    m_bGetPath = true;
     return;
   }
-  
-  m_mapGridVisited[actualIndY*m_mapSize.x + actualIndX] = true;    // Marcamos como visitada la casilla actual
-  for (int i = 4 - 1; i > -1; i--) {
-    int nuevox = actualIndX + movx[i];
-    int nuevoy = actualIndY + movy[i];
-  
-    if (nuevox >= 0 && nuevox < m_mapSize.x && nuevoy >= 0 && nuevoy < m_mapSize.y) {    // Revisamos que esté en los límites
-      if (!m_mapGridVisited[nuevoy *m_mapSize.x + nuevox] && 
+  if (nullptr != actual)
+  {
+    m_mapGridVisited[actualIndY*m_mapSize.x + actualIndX] = true;    // Marcamos como visitada la casilla actual
+    for (int i = 0; i < 8; i++) {
+      int nuevox = actualIndX + movx[i];
+      int nuevoy = actualIndY + movy[i];
+
+      if (nuevox >= 0 && nuevox < m_mapSize.x && nuevoy >= 0 && nuevoy < m_mapSize.y) {    // Revisamos que esté en los límites
+        if (!m_mapGridVisited[nuevoy *m_mapSize.x + nuevox] &&
           nullptr == m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getParent()) {  // Revisamos que no esté visitado y que no sea pared
-        float nodeCost = m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getTentativeCost();
-        float tentativeCost = 
-        m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX].getTentativeCost() + m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getCost();
-        if(tentativeCost < nodeCost){
-          auto it = m_dijkstra.find(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
-  
-          if (it != m_dijkstra.end())
-          {
-            m_dijkstra.erase(it);
+
+          float nodeCost = m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getTentativeCost();
+          float tentativeCost =
+            m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX].getTentativeCost() + m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getCost();
+          if (tentativeCost < nodeCost) {
+            auto it = m_dijkstra.find(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
+
+            if (it != m_dijkstra.end())
+            {
+              m_dijkstra.erase(it);
+            }
+            m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setTentativeCost(tentativeCost);
+            m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX]);
+            m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
+            m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
+            m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setcolor(m_inStackTileColor);
+            //m_pathStack.push_front(nuevo);
+            m_dijkstra.insert(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
           }
-          m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setTentativeCost(tentativeCost);
-          m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX]);
-          m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
-          m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
-          //m_pathStack.push_front(nuevo);
-          m_dijkstra.insert(&m_mapGridCopy[nuevoy *m_mapSize.x + nuevox]);
         }
       }
     }
   }
   if (m_dijkstra.empty())
   {
+    clearSearch();
     m_bSearching = false;
+    return;
   }
+  actual->setcolor(m_serchingTileColor);
   actual = *m_dijkstra.begin();       // Sacamos el estado a procesar
+  actual->setcolor(m_lastSerchingTileColor); 
   m_dijkstra.erase(m_dijkstra.begin());
 }
 
@@ -574,16 +577,13 @@ void RTSTiledMap::AstarSearch()
   m_mapSearchRegister.push_back(actual);
   //m_pathStack.pop_front();                         // Sacamos ese estado de la cola
   
-  if (&m_mapGridCopy[actualIndex] == m_tileFinish)
+  if (isSearchFinish(actualIndX,actualIndY))
   {
-    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x + m_tileFinishIndexX];
-    m_bSearching = false;
-    m_bGetPath = true;
     return;
   }
   
   m_mapGridVisited[actualIndex] = true;    // Marcamos como visitada la casilla actual
-  for (int i = 4 - 1; i > -1; i--) {
+  for (int i = 0; i < 8; i++) {
     int nuevox = actualIndX + movx[i];
     int nuevoy = actualIndY + movy[i];
     int nuevoIndex = nuevoy * m_mapSize.x + nuevox;
@@ -609,6 +609,7 @@ void RTSTiledMap::AstarSearch()
           m_mapGridCopy[nuevoIndex].setParent(&m_mapGridCopy[actualIndex]);
           m_mapGridCopy[nuevoIndex].setIndex(nuevoIndex);
           m_mapGridCopy[nuevoIndex].setIndexOnGrid(nuevox, nuevoy);
+          m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setcolor(m_inStackTileColor);
           m_aStar.insert(&m_mapGridCopy[nuevoIndex]);
         }
       }
@@ -617,20 +618,63 @@ void RTSTiledMap::AstarSearch()
   if (m_aStar.empty())
   {
     m_bSearching = false;
+    clearSearch();
+    return;
   }
+  actual->setcolor(m_serchingTileColor);
   actual = *m_aStar.begin();       // Sacamos el estado a procesar
+  actual->setcolor(m_lastSerchingTileColor);  
   m_aStar.erase(m_aStar.begin());
+}
+
+bool RTSTiledMap::isSearchFinish(const int x, const int y)
+{
+  if (&m_mapGridCopy[y *m_mapSize.x + x] == m_tileFinish)
+  {
+    m_pCurrentTailNode = &m_mapGridCopy[m_tileFinishIndexY *m_mapSize.x + m_tileFinishIndexX];
+    m_pCurrentTailNode->setcolor(m_PathTileColor);
+    m_bSearching = false;
+    m_bGetPath = true;
+    return true;
+  }
+  return false;
 }
 
 void RTSTiledMap::returnPath()
 {
   if (m_pCurrentTailNode ==nullptr || m_pCurrentTailNode->getIndex()==m_tileStartIndexY*m_mapSize.x+m_tileStartIndexX)
   {
+    //clearSearch();
+    m_mapPathRegisterTailForBT = m_mapPathRegisterTail;
+    m_bGetPathBT = true;
     m_bGetPath = false;
     return;
   }
   m_mapPathRegisterTail.push_back(m_pCurrentTailNode);
   m_pCurrentTailNode = m_pCurrentTailNode->getParent();
+  m_pCurrentTailNode->setcolor(m_PathTileColor);
+}
+
+void RTSTiledMap::returnLinePath()
+{
+  m_PathLineTail.clear();
+  if (nullptr== m_linePathTile &&nullptr!=actual)
+  {
+    m_linePathTile = actual;
+    //return;
+  }
+  while (m_linePathTile != nullptr)
+  {
+    if (m_mapGridCopy[m_linePathTile->getIndex()].m_bDrawing = true)
+    {
+      sf::Vertex newVertes;
+      newVertes.position = m_linePathTile->getPosition();
+      m_PathLineTail.push_back(newVertes);
+    }
+    m_linePathTile = m_linePathTile->getParent();
+
+  }
+  m_linePathTile = nullptr;
 }
 
 void RTSTiledMap::clearSearch()
@@ -649,42 +693,125 @@ void RTSTiledMap::clearSearch()
   m_mapGridCopy = m_mapGrid;
   m_dijkstra.clear();
   m_aStar.clear();
+  m_BTPathLine.clear();
+  m_lastPendiente = { 0,0 };
+  m_pCurrentBTTailNode = nullptr;
+}
+
+void RTSTiledMap::backTracking()
+{
+  if (nullptr==m_pCurrentBTTailNode)
+  {
+    m_pCurrentBTTailNode = m_mapPathRegisterTailForBT.front();
+    m_mapPathRegisterTailForBT.pop_front();
+    m_BTPathLine.push_back(m_pCurrentBTTailNode);
+    m_pCurrentBTTailNode->setcolor(m_BTTileColor);
+  }
+  if (m_pCurrentBTTailNode->getIndex() == m_tileStartIndexY * m_mapSize.x + m_tileStartIndexX|| m_mapPathRegisterTailForBT.size()<=0)
+  {
+    //clearSearch();
+    for (int i = 0; i < m_BTmapPathRegisterTail.size(); i++)
+    {
+      m_BTmapPathRegisterTail[i]->setcolor(m_PathTileColor);
+    }
+    m_BTmapPathRegisterTail.clear();
+    m_BTPathLine.push_back(m_pCurrentBTTailNode);
+    for (int i = 0; i < m_BTPathLine.size(); i++)
+    {
+      m_BTPathLine[i]->setcolor(m_BTTileColor);
+    }
+    m_bGetPathBT = false;
+    return;
+  }
+  Vector2I currentPendiente;
+  if (nullptr != m_pCurrentBTTailNode->getParent())
+  {
+    currentPendiente.x = m_pCurrentBTTailNode->getIndexGridX() - m_pCurrentBTTailNode->getParent()->getIndexGridX();
+    currentPendiente.y = m_pCurrentBTTailNode->getIndexGridY() - m_pCurrentBTTailNode->getParent()->getIndexGridY();
+  }
+  if (m_lastPendiente != currentPendiente)
+  {
+    for (int i = 0; i < m_BTmapPathRegisterTail.size(); i++)
+    {
+      m_BTmapPathRegisterTail[i]->setcolor(m_PathTileColor);
+    }
+    m_BTmapPathRegisterTail.clear();
+    m_BTPathLine.push_back(m_pCurrentBTTailNode);
+    for (int i = 0; i < m_BTPathLine.size(); i++)
+    {
+      m_BTPathLine[i]->setcolor(m_BTTileColor);
+    }
+  }
+  m_lastPendiente = currentPendiente; //agregar cosas para detectar la pendiente y la pila de la linea recta
+  m_BTmapPathRegisterTail.push_back(m_pCurrentBTTailNode);
+  m_pCurrentBTTailNode = m_pCurrentBTTailNode->getParent();
+  m_pCurrentBTTailNode->setcolor(m_BTTileColor);
+}
+
+void RTSTiledMap::updateTileColor()
+{
+  //if (nullptr != m_tileSelected)
+  //{
+  //  m_tileSelected->setcolor(m_NormalTileColor.r, m_NormalTileColor.g, m_NormalTileColor.b, m_NormalTileColor.a);
+  //}
+  //if (m_tileSelectedIndex >= 0)
+  //{
+  //  m_tileSelected = &m_mapGridCopy[m_tileSelectedIndex];
+  //  m_tileSelected->setcolor(m_selectingTileColor.r, m_selectingTileColor.g, 
+  //                           m_selectingTileColor.b, m_selectingTileColor.a);
+  //}
+  if (nullptr != m_tileStart)
+  {
+    m_tileStart->setcolor(m_tileStartColor);
+  }
+  if (nullptr != m_tileFinish)
+  {
+    m_tileFinish->setcolor(m_tileFinishColor);
+  }
 }
 
 void
 RTSTiledMap::update(float deltaTime) {
   GE_UNREFERENCED_PARAMETER(deltaTime);
   m_currenttimeToNext += deltaTime;
-  if (m_bSearching&&m_currenttimeToNext >m_timeToNext)
+  updateTileColor();
+  if (m_currenttimeToNext > m_timeToNext)
   {
-    switch (m_ePathFinding)
+    if (m_bSearching)
     {
-    case DEPTH:
-      DepthFirstSearch();
-      break;
-    case BREADTH:
-      BreadthFirstSearch();
-      break;
-    case BEST:
-      BestFirstSearch();
-      break;
-    case DIJKSTRA:
-      DijkstraSearch();
-      break;
-    case ASTAR:
-      AstarSearch();
-      break;
-    default:
-      break;
+      switch (m_ePathFinding)
+      {
+      case DEPTH:
+        DepthFirstSearch();
+        break;
+      case BREADTH:
+        BreadthFirstSearch();
+        break;
+      case BEST:
+        BestFirstSearch();
+        break;
+      case DIJKSTRA:
+        DijkstraSearch();
+        break;
+      case ASTAR:
+        AstarSearch();
+        break;
+      default:
+        break;
+      }
+    }
+    if (m_bGetPath)
+    {
+      //BreadthFirstSearchReturnPath();
+      returnPath();
+    }
+    if (m_bGetPathBT)
+    {
+      backTracking();
     }
     m_currenttimeToNext = 0.0f;
   }
-  if (m_bGetPath&&m_currenttimeToNext > m_timeToNext)
-  {
-    //BreadthFirstSearchReturnPath();
-    returnPath();
-    m_currenttimeToNext = 0.0f;
-  }
+  returnLinePath();
 }
 
 void
@@ -714,6 +841,7 @@ RTSTiledMap::render() {
   int32 iterTailSelectedY = -1;
   int32 tailSelectedX = -1;
   int32 iterTailSelectedX = -1;
+  bool tileAreadySelect = false;
 
   for (int32 iterX = tileIniX; iterX <= tileFinX; ++iterX) {
     for (int32 iterY = tileIniY; iterY <= tileFinY; ++iterY) {
@@ -723,30 +851,35 @@ RTSTiledMap::render() {
         tmpY > m_scrEnd.y ||
         (tmpX + TILESIZE_X) < m_scrStart.x ||
         (tmpY + TILESIZE_Y) < m_scrStart.y) {
+        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
         continue;
       }
-      if (tmpX < mousePosition.x&&
+     if (tmpX < mousePosition.x&&
         tmpX + TILESIZE_X > mousePosition.x&&
         tmpY  < mousePosition.y&&
         tmpY + TILESIZE_Y > mousePosition.y)
       {
-        m_tileSelectedIndexY=iterTailSelectedY= iterY;
-        m_tileSelectedIndexX=iterTailSelectedX= iterX;
+        m_tileSelectedIndexY = iterTailSelectedY = iterY;
+        m_tileSelectedIndexX = iterTailSelectedX = iterX;
         tailSelectedY = tmpY + GameOptions::TILEHALFSIZE.y;
         tailSelectedX = tmpX + GameOptions::TILEHALFSIZE.x;
         m_tileSelectedIndex = (iterY*m_mapSize.x) + iterX;
       }
-      m_mapGrid[(iterY*m_mapSize.x) + iterX].setPosition(
+      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].setPosition(
         static_cast<float>( tmpX + GameOptions::TILEHALFSIZE.x),
         static_cast<float>(tmpY + GameOptions::TILEHALFSIZE.y));
-      tmpTypeTile = m_mapGrid[(iterY*m_mapSize.x) + iterX].getType();
+      tmpTypeTile = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getType();
       RTSTexture& refTexture = m_mapTextures[tmpTypeTile];
 
       clipRect.x = (iterX << GameOptions::BITSHFT_TILESIZE.x) % refTexture.getWidth();
       clipRect.y = (iterY << GameOptions::BITSHFT_TILESIZE.y) % refTexture.getHeight();
 
       refTexture.setPosition(tmpX, tmpY);
+      sf::Color tmpColor = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getColor();
+      refTexture.setColor(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
       refTexture.setSrcRect(clipRect.x, clipRect.y, TILESIZE_X, TILESIZE_Y);
+      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+      
       refTexture.draw();
     }
   }
@@ -808,31 +941,11 @@ RTSTiledMap::render() {
 
     m_pTarget->draw(&gridLines[0], gridLines.size(), sf::Lines);
   }
-  for (int i = 0; i < m_mapSearchRegister.size(); i++)
+  if (m_PathLineTail.size()>0)
   {
-    if (i== m_mapSearchRegister.size()-1)
-    {
-      drawTailOutline(m_mapSearchRegister[i]->getIndex(), m_lastSerchingTileColor);
-    }
-    else
-    {
-      drawTailOutline(m_mapSearchRegister[i]->getIndex(), m_serchingTileColor);
-    }
-  }
-  for (int i = 0; i < m_mapPathRegisterTail.size(); i++)
-  {
-    drawTailOutline(m_mapPathRegisterTail[i]->getIndex(), m_lastPathTileColor);
+    m_pTarget->draw(&m_PathLineTail[0], m_PathLineTail.size(), sf::LinesStrip);
   }
   {
-    if (m_tileStart!=nullptr)
-    {
-      drawTailOutline(m_tileStartIndexY*m_mapSize.x+ m_tileStartIndexX,m_tileStartColor);
-    }
-    if (m_tileFinish != nullptr)
-    {
-      drawTailOutline(m_tileFinishIndexY*m_mapSize.x+ m_tileFinishIndexX, m_tileFinishColor);
-    }
-
     m_mouseInWindow.setPosition(mousePosition.x, mousePosition.y);
     m_pTarget->draw(m_mouseInWindow);
     if (m_tileSelectedIndex >= 0)
