@@ -7,6 +7,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "RTSConfig.h"
+#include "RTSTextureObject.h"
+#include "RTSObjects.h"
 
 using namespace geEngineSDK;
 
@@ -152,7 +154,13 @@ class RTSTiledMap
     };
     bool m_bDrawing = false;
 
-  private:
+    void
+    addObject(Object object) {
+      m_myObject.push_back(object);
+    }
+
+    Vector<Object> m_myObject;
+   private:
     uint8 m_idType;
     int8 m_cost;
     sf::Vector2f m_position;
@@ -299,6 +307,9 @@ class RTSTiledMap
   setTileType(const int& i);
 
   void
+  addTree();
+
+  void
     setTimeToPaintNextTail(const float& time) {
     m_timeToNext = time;
   }
@@ -358,6 +369,8 @@ class RTSTiledMap
   Vector2I m_mapSize;
   Vector<MapTile> m_mapGrid;
   Vector<RTSTexture> m_mapTextures;
+  TextureObject m_textureObjects;
+  Vector<Object> m_objects;
 
   Vector2I m_iCamera;
   Vector2 m_fCamera;

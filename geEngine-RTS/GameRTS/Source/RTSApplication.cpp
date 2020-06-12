@@ -34,7 +34,7 @@ float
 g_cameraZoom = 1.0f;
 
 static const char*
-g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle" };
+g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle", "Tree" };
 static int 
 g_AddOption;
 static string g_AddOptionPreviw = g_AddList[0];
@@ -194,13 +194,15 @@ RTSApplication::gameLoop() {
           case 1:
             m_gameWorld.getTiledMap()->selecetFinalTail();
             break;
+          case 6:
+            m_gameWorld.getTiledMap()->addTree();
           default:
             break;
           }
         }
       }
     }
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& g_AddOption>1)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& g_AddOption>1 && g_AddOption < 6)
     {
       m_gameWorld.getTiledMap()->setTileType(g_AddOption - 2);
     }

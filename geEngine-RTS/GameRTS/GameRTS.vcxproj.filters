@@ -47,6 +47,12 @@
     <ClCompile Include="Source\RTSWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\RTSObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSTextureObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\RTSUnitType.h">
@@ -87,6 +93,12 @@
     </ClInclude>
     <ClInclude Include="Include\Externals\stb_truetype.h">
       <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSObjects.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSTextureObject.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

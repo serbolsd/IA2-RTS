@@ -45,6 +45,7 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
 #endif
     m_mapTextures[i].loadFromFile(m_pTarget, textureName);
   }
+  m_textureObjects.onInit(pTarget);
   //To see a mouse position on render target
   m_mouseInWindow.setFillColor(sf::Color::Magenta);
   m_mouseInWindow.setRadius(4);
@@ -311,6 +312,27 @@ void RTSTiledMap::setTileType(const int & i)
     default:
       break;
     }
+    m_mapGridCopy.clear();
+    m_mapGridCopy = m_mapGrid;
+  }
+}
+
+void RTSTiledMap::addTree()
+{
+  if (m_tileSelectedIndex >= 0)
+  {
+    Object tmpObject;
+    tmpObject.setTile(&m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX]);
+    /* initialize random seed: */
+    srand(time(NULL));
+
+    /* generate secret number between 1 and 10: */
+    int id = rand() % m_textureObjects.getTesturesTreesData().size();
+    tmpObject.setIDofData(id);
+
+    m_objects.push_back(tmpObject);
+    m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].addObject(tmpObject);
+
     m_mapGridCopy.clear();
     m_mapGridCopy = m_mapGrid;
   }
@@ -879,8 +901,15 @@ RTSTiledMap::render() {
       refTexture.setColor(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
       refTexture.setSrcRect(clipRect.x, clipRect.y, TILESIZE_X, TILESIZE_Y);
       m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
-      
+ 
       refTexture.draw();
+
+      for (int i = 0; i < m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
+        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+      }
+      for (int i = 0; i < m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
+        m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+      }
     }
   }
 

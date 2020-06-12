@@ -175,7 +175,9 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\RTSApplication.cpp" />
     <ClCompile Include="Source\RTSConfig.cpp" />
+    <ClCompile Include="Source\RTSObjects.cpp" />
     <ClCompile Include="Source\RTSTexture.cpp" />
+    <ClCompile Include="Source\RTSTextureObject.cpp" />
     <ClCompile Include="Source\RTSTiledMap.cpp" />
     <ClCompile Include="Source\RTSUnitType.cpp" />
     <ClCompile Include="Source\RTSWorld.cpp" />
@@ -190,7 +192,9 @@
     <ClInclude Include="Include\Externals\stb_truetype.h" />
     <ClInclude Include="Include\RTSApplication.h" />
     <ClInclude Include="Include\RTSConfig.h" />
+    <ClInclude Include="Include\RTSObjects.h" />
     <ClInclude Include="Include\RTSTexture.h" />
+    <ClInclude Include="Include\RTSTextureObject.h" />
     <ClInclude Include="Include\RTSTiledMap.h" />
     <ClInclude Include="Include\RTSUnitType.h" />
     <ClInclude Include="Include\RTSWorld.h" />
