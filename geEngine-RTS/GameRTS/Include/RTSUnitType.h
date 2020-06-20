@@ -47,6 +47,26 @@ namespace RTSGame {
     Vector<AnimationFrame> frames[DIRECTIONS::kNUM_DIRECTIONS];
   };
 
+  namespace UNITTYPE {
+    enum E
+    {
+      KTERRESTRIAL = 0,
+      KFLYING,
+      KMARINE,
+      KNUMUNITTYPES
+    };
+  }
+
+  namespace UNITNAME {
+    enum E
+    {
+      KARCHER = 0,
+      castilian_knight,
+      KMARINE,
+      KNUMUNITNAMES
+    };
+  }
+
   class RTSUnitType
   {
    public:
@@ -56,12 +76,11 @@ namespace RTSGame {
      static RTSUnitType*
      loadFromFile(uint32 idUnitType);
 
-     
-
      void
      loadAnimationData(sf::RenderTarget* pTarget, uint32 idUnitType);
 
-   private:
+
+   public:
      uint32 m_id;
      String m_name;
 

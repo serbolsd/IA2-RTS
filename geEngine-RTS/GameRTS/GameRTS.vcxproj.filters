@@ -12,6 +12,9 @@
     <Filter Include="Source Files\Externals">
       <UniqueIdentifier>{05cba2b1-52b3-405c-9866-b29fae8fd3fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UnitsStateMachine">
+      <UniqueIdentifier>{be3938f6-503f-426e-9e73-e4667e221dc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Externals\imgui.cpp">
@@ -52,6 +55,21 @@
     </ClCompile>
     <ClCompile Include="Source\RTSTextureObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSUnit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StateMachine.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitIdleState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitRunState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitAttackState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +117,15 @@
     </ClInclude>
     <ClInclude Include="Include\RTSTextureObject.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\UnitsStates.h">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSUnit.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StateMachine.h">
+      <Filter>Source Files\UnitsStateMachine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

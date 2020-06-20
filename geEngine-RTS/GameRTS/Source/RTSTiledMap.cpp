@@ -38,11 +38,22 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
 
   String textureName;
   for (uint32 i = 0; i < TERRAIN_TYPE::kNumObjects; ++i) {
+    if (TERRAIN_TYPE::kArrow == i)
+    {
 #ifdef MAP_IS_ISOMETRIC
-    textureName = "Textures/Terrain/iso_terrain_" + toString(i) + ".png";
+      textureName = "Textures/Terrain/iso_Arrow.png";
 #else
-    textureName = "Textures/Terrain/terrain_" + toString(i) + ".png";
+      textureName = "Textures/Terrain/Arrow.png";
 #endif
+    }
+    else
+    {
+#ifdef MAP_IS_ISOMETRIC
+      textureName = "Textures/Terrain/iso_terrain_" + toString(i) + ".png";
+#else
+      textureName = "Textures/Terrain/terrain_" + toString(i) + ".png";
+#endif
+    }
     m_mapTextures[i].loadFromFile(m_pTarget, textureName);
   }
   m_textureObjects.onInit(pTarget);
@@ -53,7 +64,10 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
   m_outLineTail.reserve(5);
  
   preCalc();
-
+  m_stateMachine.init();
+  m_archerUnit.setStateMachine(&m_stateMachine);
+  m_archerUnit.SetAnimationData(&m_textureObjects.getTesturesUnit(), m_textureObjects.getArcherAnimations());
+  m_archerUnit.onInit();
   return true;
 }
 
@@ -65,6 +79,7 @@ RTSTiledMap::destroy() {
   m_mapSize = Vector2I::ZERO;
   setCameraStartPosition(0, 0);
   preCalc();
+  m_stateMachine.onDelete();
 }
 
 int8
@@ -121,7 +136,7 @@ RTSTiledMap::setCameraStartPosition(const int32 x, const int32 y) {
 }
 
 void
-RTSTiledMap::getScreenToMapCoords(const int32 scrX,
+RTSTiledMap::getScreenToMapCoords(const int32 scrX, 
                                   const int32 scrY,
                                   int32 &mapX,
                                   int32 &mapY) {
@@ -141,7 +156,7 @@ RTSTiledMap::getScreenToMapCoords(const int32 scrX,
 }
 
 void
-RTSTiledMap::getMapToScreenCoords(const int32 mapX,
+RTSTiledMap::getMapToScreenCoords(const int32 mapX,//para imprimir convierte en una posicion para dibujar
                                   const int32 mapY,
                                   int32 &scrX,
                                   int32 &scrY) {
@@ -187,6 +202,8 @@ void RTSTiledMap::selecetStartTail()
     m_tileStart->setcolor(m_tileStartColor);
     m_tileStartIndexX = m_tileSelectedIndexX;
     m_tileStartIndexY = m_tileSelectedIndexY;
+    m_archerUnit.m_position = { m_mapGridCopy[m_tileSelectedIndex].getPosition().x,
+                               m_mapGridCopy[m_tileSelectedIndex].getPosition().y };
   }
   
 }
@@ -373,6 +390,60 @@ void RTSTiledMap::drawTailOutline(const int & tailIndex,const sf::Color & outlin
   m_pTarget->draw(&m_outLineTail[0], 5, sf::PrimitiveType::LinesStrip);
 }
 
+void RTSTiledMap::setArrow()
+{
+  if (nullptr == m_linePathTile || nullptr == m_linePathTile->getParent())
+  {
+    return;
+  }
+  MapTile* tmpParent = m_linePathTile->getParent();
+  Vector2I indexParent = { tmpParent->getIndexGridX(),tmpParent->getIndexGridY() };
+  Vector2I index = { m_linePathTile->getIndexGridX(),m_linePathTile->getIndexGridY() };
+  Vector2I direction = index - indexParent;
+  if (0 == direction.x)
+  {
+    if (1 == direction.y)
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kDown;
+    }
+    else
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kUp;
+    }
+  }
+  else if (0 == direction.y)
+  {
+    if (1 == direction.x)
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kRight;
+    }
+    else
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kLeft;
+    }
+  }
+  else
+  {
+    if (1 == direction.y && 1 == direction.x)
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kRightDown;
+    }
+    else if (-1 == direction.y && 1 == direction.x)
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kRightUp;
+    }
+    else if (1 == direction.y && -1 == direction.x)
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kLeftDown;
+    }
+    else
+    {
+      m_linePathTile->m_directionArrow = ARROW_TYPE::kLeftUp;
+    }
+  }
+  m_linePathTile->hadArrow = true;
+}
+
 void RTSTiledMap::BreadthFirstSearch()
 {
   if (m_pathStack.empty())
@@ -382,9 +453,11 @@ void RTSTiledMap::BreadthFirstSearch()
     return;
   }
 
+  
   actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.front();       // Sacamos el estado a procesar
   actual->setcolor(m_lastSerchingTileColor);
+
   int actualIndX = actual->getIndexGridX();
   int actualIndY = actual->getIndexGridY();
 
@@ -431,7 +504,7 @@ void RTSTiledMap::DepthFirstSearch()
     clearSearch();
     return;
   }
-
+  
   actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.back();       // Sacamos el estado a procesar
   actual->setcolor(m_lastSerchingTileColor);
@@ -475,7 +548,7 @@ void RTSTiledMap::BestFirstSearch()
     clearSearch();
     return;
   }
-
+  
   actual->setcolor(m_serchingTileColor);
   actual = m_pathStack.front();       // Sacamos el estado a procesar
   actual->setcolor(m_lastSerchingTileColor);
@@ -583,6 +656,7 @@ void RTSTiledMap::DijkstraSearch()
     m_bSearching = false;
     return;
   }
+  
   actual->setcolor(m_serchingTileColor);
   actual = *m_dijkstra.begin();       // Sacamos el estado a procesar
   actual->setcolor(m_lastSerchingTileColor); 
@@ -643,6 +717,7 @@ void RTSTiledMap::AstarSearch()
     clearSearch();
     return;
   }
+  
   actual->setcolor(m_serchingTileColor);
   actual = *m_aStar.begin();       // Sacamos el estado a procesar
   actual->setcolor(m_lastSerchingTileColor);  
@@ -687,14 +762,14 @@ void RTSTiledMap::returnLinePath()
   }
   while (m_linePathTile != nullptr)
   {
-    if (m_mapGridCopy[m_linePathTile->getIndex()].m_bDrawing = true)
+    if (m_mapGridCopy[m_linePathTile->getIndex()].m_bDrawing)
     {
       sf::Vertex newVertes;
       newVertes.position = m_linePathTile->getPosition();
       m_PathLineTail.push_back(newVertes);
     }
+    setArrow();
     m_linePathTile = m_linePathTile->getParent();
-
   }
   m_linePathTile = nullptr;
 }
@@ -738,11 +813,19 @@ void RTSTiledMap::backTracking()
     }
     m_BTmapPathRegisterTail.clear();
     m_BTPathLine.push_back(m_pCurrentBTTailNode);
+    Vector2 point;
     for (int i = 0; i < m_BTPathLine.size(); i++)
     {
       m_BTPathLine[i]->setcolor(m_BTTileColor);
+      
+    }
+    for (int i = m_BTPathLine.size() - 1; i > -1; --i)
+    {
+      point = { m_BTPathLine[i]->getPosition().x,m_BTPathLine[i]->getPosition().y };
+      m_archerUnit.m_pathToFollow.push_back(point);
     }
     m_bGetPathBT = false;
+    m_archerUnit.m_bHaveObjetive = true;
     return;
   }
   Vector2I currentPendiente;
@@ -834,6 +917,7 @@ RTSTiledMap::update(float deltaTime) {
     m_currenttimeToNext = 0.0f;
   }
   returnLinePath();
+  m_archerUnit.onUpdate(deltaTime);
 }
 
 void
@@ -874,41 +958,125 @@ RTSTiledMap::render() {
         (tmpX + TILESIZE_X) < m_scrStart.x ||
         (tmpY + TILESIZE_Y) < m_scrStart.y) {
         m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
+        m_mapGrid[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
         continue;
       }
-     if (tmpX < mousePosition.x&&
-        tmpX + TILESIZE_X > mousePosition.x&&
-        tmpY  < mousePosition.y&&
-        tmpY + TILESIZE_Y > mousePosition.y)
-      {
-        m_tileSelectedIndexY = iterTailSelectedY = iterY;
-        m_tileSelectedIndexX = iterTailSelectedX = iterX;
-        tailSelectedY = tmpY + GameOptions::TILEHALFSIZE.y;
-        tailSelectedX = tmpX + GameOptions::TILEHALFSIZE.x;
-        m_tileSelectedIndex = (iterY*m_mapSize.x) + iterX;
-      }
-      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].setPosition(
+      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+      m_mapGrid[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+      if (tmpX < mousePosition.x&&
+         tmpX + TILESIZE_X > mousePosition.x&&
+         tmpY  < mousePosition.y&&
+         tmpY + TILESIZE_Y > mousePosition.y)
+       {
+         m_tileSelectedIndexY = iterTailSelectedY = iterY;
+         m_tileSelectedIndexX = iterTailSelectedX = iterX;
+         tailSelectedY = tmpY + GameOptions::TILEHALFSIZE.y;
+         tailSelectedX = tmpX + GameOptions::TILEHALFSIZE.x;
+         m_tileSelectedIndex = (iterY*m_mapSize.x) + iterX;
+       }
+       m_mapGridCopy[(iterY*m_mapSize.x) + iterX].setPosition(
         static_cast<float>( tmpX + GameOptions::TILEHALFSIZE.x),
         static_cast<float>(tmpY + GameOptions::TILEHALFSIZE.y));
-      tmpTypeTile = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getType();
-      RTSTexture& refTexture = m_mapTextures[tmpTypeTile];
+       tmpTypeTile = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getType();
+       RTSTexture& refTexture = m_mapTextures[tmpTypeTile];
 
-      clipRect.x = (iterX << GameOptions::BITSHFT_TILESIZE.x) % refTexture.getWidth();
-      clipRect.y = (iterY << GameOptions::BITSHFT_TILESIZE.y) % refTexture.getHeight();
+       clipRect.x = (iterX << GameOptions::BITSHFT_TILESIZE.x) % refTexture.getWidth();
+       clipRect.y = (iterY << GameOptions::BITSHFT_TILESIZE.y) % refTexture.getHeight();
+       
+       refTexture.setPosition(tmpX, tmpY);
+       sf::Color tmpColor = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getColor();
+       refTexture.setColor(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
+       refTexture.setSrcRect(clipRect.x, clipRect.y, TILESIZE_X, TILESIZE_Y);
+       //m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+       
+       refTexture.draw();
+       for (int i = 0; i < m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
+         m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+       }
+    }
+  }
 
-      refTexture.setPosition(tmpX, tmpY);
-      sf::Color tmpColor = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getColor();
-      refTexture.setColor(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
-      refTexture.setSrcRect(clipRect.x, clipRect.y, TILESIZE_X, TILESIZE_Y);
-      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
- 
-      refTexture.draw();
+  for (int32 iterX = tileIniX; iterX <= tileFinX; ++iterX) {
+    for (int32 iterY = tileIniY; iterY <= tileFinY; ++iterY) {
 
-      for (int i = 0; i < m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
-        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+      getMapToScreenCoords(iterX, iterY, tmpX, tmpY);
+      if (tmpX > m_scrEnd.x ||
+        tmpY > m_scrEnd.y ||
+        (tmpX + TILESIZE_X) < m_scrStart.x ||
+        (tmpY + TILESIZE_Y) < m_scrStart.y) {
+        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
+        continue;
       }
+
       for (int i = 0; i < m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
         m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+      }
+      if (m_mapGridCopy[(iterY*m_mapSize.x) + iterX].hadArrow)
+      {
+        RTSTexture& refTexture = m_mapTextures[TERRAIN_TYPE::kArrow];
+
+        clipRect.x = (iterX << GameOptions::BITSHFT_TILESIZE.x) % refTexture.getWidth();
+        clipRect.y = (iterY << GameOptions::BITSHFT_TILESIZE.y) % refTexture.getHeight();
+
+        refTexture.setPosition(tmpX+ GameOptions::TILEHALFSIZE.x, tmpY+ GameOptions::TILEHALFSIZE.y);
+        refTexture.setOrigin(refTexture.getWidth()*0.5f, refTexture.getWidth()*0.5f);
+        switch (m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_directionArrow)    
+        { 
+        case ARROW_TYPE::kRight:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(0.0f));
+#endif
+          break;
+        case ARROW_TYPE::kRightDown:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(45));
+#endif
+          break;
+        case ARROW_TYPE::kDown:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(90));
+#endif
+          break;
+        case ARROW_TYPE::kLeftDown:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(135));
+#endif
+          break;
+        case ARROW_TYPE::kLeft:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(180));
+#endif
+          break;
+        case ARROW_TYPE::kLeftUp:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(225));
+#endif
+          break;
+        case ARROW_TYPE::kUp:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(270));
+#endif
+          break;
+        case ARROW_TYPE::kRightUp:
+#ifdef MAP_IS_ISOMETRIC
+#else
+          refTexture.setRotation(Degree(315));
+#endif
+          break;
+        default:
+          break;
+        }
+
+        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+
+        refTexture.draw();
       }
     }
   }
@@ -982,7 +1150,7 @@ RTSTiledMap::render() {
       drawTailOutline(m_tileSelectedIndex,m_selectingTileColor);
     }
   }
-
+  m_archerUnit.draw(m_pTarget);
 }
 
 RTSTiledMap::MapTile::MapTile() {

@@ -9,6 +9,8 @@
 #include "RTSConfig.h"
 #include "RTSTextureObject.h"
 #include "RTSObjects.h"
+#include "RTSUnit.h"
+#include "StateMachine.h"
 
 using namespace geEngineSDK;
 
@@ -20,10 +22,23 @@ namespace TERRAIN_TYPE {
     kGrass,
     kMarsh,
     kObstacle,
+    kArrow,
     kNumObjects
   };
 }
-
+namespace ARROW_TYPE {
+  enum E {
+    kRight = 0,
+    kRightDown,
+    kDown,
+    kLeftDown,
+    kLeft,
+    kLeftUp,
+    kUp,
+    kRightUp,
+    kUnknow
+  };
+}
   enum EURISTIC_TYPE
   {
     EUCLIDEAN =0,
@@ -160,6 +175,9 @@ class RTSTiledMap
     }
 
     Vector<Object> m_myObject;
+    bool hadArrow = false;
+    ARROW_TYPE::E m_directionArrow = ARROW_TYPE::E::kUnknow;
+
    private:
     uint8 m_idType;
     int8 m_cost;
@@ -172,6 +190,7 @@ class RTSTiledMap
     float m_euristic=-1;
     float m_TentativeCost = INT_MAX;
   };
+
   class CLessWeight
   {
   public:
@@ -331,7 +350,10 @@ class RTSTiledMap
  private:
   void
   drawTailOutline(const int & tailIndex, const sf::Color & outlineColor);
-  
+
+  void
+  setArrow();
+
   void
   BreadthFirstSearch();
 
@@ -370,6 +392,7 @@ class RTSTiledMap
   Vector<MapTile> m_mapGrid;
   Vector<RTSTexture> m_mapTextures;
   TextureObject m_textureObjects;
+  TextureObject m_textureArrow;
   Vector<Object> m_objects;
 
   Vector2I m_iCamera;
@@ -442,4 +465,7 @@ class RTSTiledMap
   Vector2I m_lastPendiente = {0,0};
   float m_euristicRelevance = 1;
   float m_costRelevance = 1;
+  RTSUnit m_archerUnit;
+  StateMachine m_stateMachine;
+
 };

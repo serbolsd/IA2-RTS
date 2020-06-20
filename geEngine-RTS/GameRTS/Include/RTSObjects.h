@@ -7,7 +7,6 @@
 
 #include "RTSConfig.h"
 #include "RTSTextureObject.h"
-class MapTile;
 
 enum TYPEOBJECT {
   TREE=0,
@@ -58,9 +57,9 @@ class Object {
   setIDofData(int id) {
     m_ID = id;
   }
+  int m_ID;
+  void* m_myTile;
+  Vector2 m_position;
+  TYPEOBJECT m_ytpe=UNKNOWOBJECTTYPE;
  private:
-   int m_ID;
-   void* m_myTile;
-   Vector2 m_position;
-   TYPEOBJECT m_ytpe=UNKNOWOBJECTTYPE;
 };

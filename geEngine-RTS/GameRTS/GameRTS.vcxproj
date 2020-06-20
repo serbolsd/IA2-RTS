@@ -179,8 +179,13 @@
     <ClCompile Include="Source\RTSTexture.cpp" />
     <ClCompile Include="Source\RTSTextureObject.cpp" />
     <ClCompile Include="Source\RTSTiledMap.cpp" />
+    <ClCompile Include="Source\RTSUnit.cpp" />
     <ClCompile Include="Source\RTSUnitType.cpp" />
     <ClCompile Include="Source\RTSWorld.cpp" />
+    <ClCompile Include="Source\StateMachine.cpp" />
+    <ClCompile Include="Source\unitAttackState.cpp" />
+    <ClCompile Include="Source\unitIdleState.cpp" />
+    <ClCompile Include="Source\unitRunState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Externals\imconfig.h" />
@@ -196,8 +201,11 @@
     <ClInclude Include="Include\RTSTexture.h" />
     <ClInclude Include="Include\RTSTextureObject.h" />
     <ClInclude Include="Include\RTSTiledMap.h" />
+    <ClInclude Include="Include\RTSUnit.h" />
     <ClInclude Include="Include\RTSUnitType.h" />
     <ClInclude Include="Include\RTSWorld.h" />
+    <ClInclude Include="Include\StateMachine.h" />
+    <ClInclude Include="Include\UnitsStates.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
