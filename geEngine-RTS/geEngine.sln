@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "geUtility", "geUtility\geUtility.vcxproj", "{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3} = {6E32D479-2E1A-4360-A1F8-920DADC8DAF3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameRTS", "GameRTS\GameRTS.vcxproj", "{25F9CA63-923F-4BA2-A9A5-2F337E85346C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3} = {6E32D479-2E1A-4360-A1F8-920DADC8DAF3}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ORBIS = Debug|ORBIS
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ORBIS = Release|ORBIS
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Debug|ORBIS.ActiveCfg = Debug|Win32
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Debug|x64.ActiveCfg = Debug|x64
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Debug|x64.Build.0 = Debug|x64
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Debug|x86.ActiveCfg = Debug|Win32
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Debug|x86.Build.0 = Debug|Win32
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Release|ORBIS.ActiveCfg = Release|Win32
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Release|x64.ActiveCfg = Release|x64
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Release|x64.Build.0 = Release|x64
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Release|x86.ActiveCfg = Release|Win32
+		{6E32D479-2E1A-4360-A1F8-920DADC8DAF3}.Release|x86.Build.0 = Release|Win32
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|ORBIS.ActiveCfg = Debug|ORBIS
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|ORBIS.Build.0 = Debug|ORBIS
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|x64.ActiveCfg = Debug|x64
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|x64.Build.0 = Debug|x64
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|x86.ActiveCfg = Debug|Win32
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Debug|x86.Build.0 = Debug|Win32
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|ORBIS.ActiveCfg = Release|ORBIS
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|ORBIS.Build.0 = Release|ORBIS
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|x64.ActiveCfg = Release|x64
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|x64.Build.0 = Release|x64
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|x86.ActiveCfg = Release|Win32
+		{9E30FB1A-85C7-4D31-929C-BA3E243E1D7C}.Release|x86.Build.0 = Release|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Debug|ORBIS.ActiveCfg = Debug|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Debug|x64.ActiveCfg = Debug|x64
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Debug|x64.Build.0 = Debug|x64
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Debug|x86.ActiveCfg = Debug|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Debug|x86.Build.0 = Debug|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Release|ORBIS.ActiveCfg = Release|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Release|x64.ActiveCfg = Release|x64
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Release|x64.Build.0 = Release|x64
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Release|x86.ActiveCfg = Release|Win32
+		{25F9CA63-923F-4BA2-A9A5-2F337E85346C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {240C54EF-5175-406B-8E9B-01F363C68485}
+	EndGlobalSection
+EndGlobal

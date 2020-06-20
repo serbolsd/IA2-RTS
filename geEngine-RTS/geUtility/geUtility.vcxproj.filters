@@ -1,0 +1,595 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Allocators">
+      <UniqueIdentifier>{2035c8fd-3e25-4734-8b44-c3f2fc562d72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Error">
+      <UniqueIdentifier>{34971f15-35b5-418c-9952-50cc3b1f11bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\String">
+      <UniqueIdentifier>{826b222c-ebc1-4d64-83fe-35f7fb92d3dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Externals">
+      <UniqueIdentifier>{a2366f7f-796e-4db9-aad3-2a8d81cd5571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Filesystem">
+      <UniqueIdentifier>{01902af1-4f15-40bb-a484-fd235b626cbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Win32">
+      <UniqueIdentifier>{a68fa962-e73c-4ce7-bd8f-7079d03b0bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image">
+      <UniqueIdentifier>{794da55a-d9ad-427c-991e-cb8a0ba13aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{ec80c088-f4cf-4d24-8ebe-eb2d67a9c76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debug">
+      <UniqueIdentifier>{f85b5667-fe52-42bb-8e1e-9c8460a8370b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Threading">
+      <UniqueIdentifier>{8d2242e3-297a-494f-add2-9e0b58ad8bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ORBIS">
+      <UniqueIdentifier>{b1f6daa2-f5b5-41db-836a-1023f8b27152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RTTI">
+      <UniqueIdentifier>{5aed3be7-df9c-4a00-95a0-c89f9426e4ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Prerequisites">
+      <UniqueIdentifier>{d6aed97f-635a-46b1-9ad8-2c1f4a17f788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{8e54fd18-f7a4-4af8-b12e-7b274ef2b463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Externals\TetGen">
+      <UniqueIdentifier>{b31325f8-8b5d-4096-a0a8-f408c4dec8eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Externals\LZ4">
+      <UniqueIdentifier>{3e80b03e-adfd-4ea8-a279-5c399310b160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Externals\MD5">
+      <UniqueIdentifier>{5a127325-f996-419c-97d8-3ef54c709e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Externals\JSON">
+      <UniqueIdentifier>{9a14750f-7159-496c-b065-7a2e278a6e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reflection">
+      <UniqueIdentifier>{173edd20-2449-4990-a2cc-f5e993919ff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Serialization">
+      <UniqueIdentifier>{b0e75940-0335-4d1d-9ace-254b13bca2bb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\gePlatformDefines.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePlatformTypes.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFwdDeclUtil.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePrerequisitesUtil.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMacroUtil.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIPrerequisites.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geStdHeaders.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geEnumClassHash.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFrameAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMemAllocProfiler.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMemoryAllocator.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geStaticAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBitmapWriter.h">
+      <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDebug.h">
+      <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geLog.h">
+      <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geException.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDataStream.h">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFileSystem.h">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePath.h">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geColor.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFloat16Color.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDegree.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFloat10.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFloat11.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFloat16.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFloat32.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMath.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRadian.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVector2.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVector2Half.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVector2I.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVector3.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVectorNI.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geString.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geStringFormat.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geStringID.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geAsyncOp.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geSpinLock.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geThreadDefines.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geThreadPool.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Win32\geMinWindows.h">
+      <Filter>Source Files\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Win32\geWin32PlatformUtility.h">
+      <Filter>Source Files\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Win32\geWin32Windows.h">
+      <Filter>Source Files\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geCrashHandler.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geUnicode.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTaskScheduler.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geAny.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBitwise.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDynLib.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDynLibManager.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geEvent.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMessageHandler.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMessageHandlerFwd.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geModule.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geNonCopyable.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePlatformUtility.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geServiceLocator.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTime.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTimer.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geUtil.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFlags.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geGroupAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\TetGen\tetgen.h">
+      <Filter>Source Files\Externals\TetGen</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTriangulation.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geCompression.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMatrix4.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePlane.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geVector4.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRotator.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geQuaternion.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBox.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geSphere.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geUUID.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\lz4.h">
+      <Filter>Source Files\Externals\LZ4</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\md5.h">
+      <Filter>Source Files\Externals\MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\json.hpp">
+      <Filter>Source Files\Externals\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geInterval.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geOrientedBox.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBox2D.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBoxSphereBounds.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geConvexHull2D.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geCapsuleShape.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTextureAtlasLayout.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIField.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIManagedDataBlockField.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIPlainField.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIType.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geIReflectable.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geIReflectableRTTI.h">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIReflectableField.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRTTIReflectablePtrField.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geSerializedObject.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geSerializedObjectRTTI.h">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBinaryDiff.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geMemorySerializer.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFileSerializer.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBinarySerializer.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBinaryCloner.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geStackAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geFreeAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gePoolAlloc.h">
+      <Filter>Source Files\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geOctree.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geSIMD.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geDataBlob.h">
+      <Filter>Source Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTransform.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geTransformRTTI.h">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geBox2DI.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geNumericLimits.h">
+      <Filter>Source Files\Prerequisites</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geRandom.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\geColorGradient.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\geMemoryAllocator.cpp">
+      <Filter>Source Files\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geString.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geFrameAlloc.cpp">
+      <Filter>Source Files\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gePath.cpp">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geStringID.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Win32\geWin32PlatformUtility.cpp">
+      <Filter>Source Files\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geColor.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geDegree.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geMath.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geRadian.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geLog.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geDataStream.cpp">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Win32\geWin32FileSystem.cpp">
+      <Filter>Source Files\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geDebug.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBitmapWriter.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Win32\geWin32CrashHandler.cpp">
+      <Filter>Source Files\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geFileSystem.cpp">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geAsyncOp.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ORBIS\geORBISCrashHandler.cpp">
+      <Filter>Source Files\ORBIS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ORBIS\geORBISFileSystem.cpp">
+      <Filter>Source Files\ORBIS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ORBIS\geORBISPlatformUtility.cpp">
+      <Filter>Source Files\ORBIS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geThreadPool.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Win32\geWin32Windows.cpp">
+      <Filter>Source Files\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geVector2I.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geVector2.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geVector3.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geCrashHandler.cpp">
+      <Filter>Source Files\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geUnicode.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTaskScheduler.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geDynLib.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geDynLibManager.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geMessageHandler.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTime.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTimer.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geUtil.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\TetGen\predicates.cxx">
+      <Filter>Source Files\Externals\TetGen</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\TetGen\tetgen.cxx">
+      <Filter>Source Files\Externals\TetGen</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTriangulation.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geCompression.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geMatrix4.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geVector4.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geRotator.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geQuaternion.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geSphere.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBox.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geUUID.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\lz4.c">
+      <Filter>Source Files\Externals\LZ4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\md5.cpp">
+      <Filter>Source Files\Externals\MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBox2D.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBoxSphereBounds.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTextureAtlasLayout.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geRTTIField.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geIReflectable.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geRTTIType.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geSerializedObject.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBinaryDiff.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geMemorySerializer.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBinarySerializer.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBinaryCloner.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geFileSerializer.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geStackAlloc.cpp">
+      <Filter>Source Files\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geTransform.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geBox2DI.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\geColorGradient.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

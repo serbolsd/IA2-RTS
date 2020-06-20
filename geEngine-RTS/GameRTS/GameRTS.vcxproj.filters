@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Externals">
+      <UniqueIdentifier>{05cba2b1-52b3-405c-9866-b29fae8fd3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UnitsStateMachine">
+      <UniqueIdentifier>{be3938f6-503f-426e-9e73-e4667e221dc7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Externals\imgui.cpp">
+      <Filter>Source Files\Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\imgui_demo.cpp">
+      <Filter>Source Files\Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\imgui_draw.cpp">
+      <Filter>Source Files\Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Externals\imgui-SFML.cpp">
+      <Filter>Source Files\Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSUnitType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSTiledMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSTextureObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSUnit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StateMachine.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitIdleState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitRunState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unitAttackState.cpp">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\RTSUnitType.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSApplication.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSConfig.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSTexture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSTiledMap.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSWorld.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\imconfig.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\imgui.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\imgui_internal.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\imgui-SFML.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\stb_rect_pack.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\stb_textedit.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Externals\stb_truetype.h">
+      <Filter>Source Files\Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSObjects.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSTextureObject.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\UnitsStates.h">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSUnit.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StateMachine.h">
+      <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

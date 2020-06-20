@@ -1,0 +1,16 @@
+Intermediate/
+Lib/
+.vs/
+*.iobj
+*.ipdb
+Bin/ORBIS/
+Bin/Reports/20*/*.*
+*.tmp
+geUtility_UnitTest/My Advisor Results - geUtility_UnitTest/
+geUtility_UnitTest/My Amplifier Results - geUtility_UnitTest/
+geUtility/My Advisor Results - geUtility/
+geUtility/My Amplifier Results - geUtility/
+geUtility_UnitTest/My Inspector Results - geUtility_UnitTest/
+Docs/generated/
+Bin/x64/
+Bin/x86/
