@@ -1,22 +1,26 @@
 #pragma once
 
 //Define only if the map should be isometric
-//#define MAP_IS_ISOMETRIC
+//#define GameOptions::s_MapIsIsometric
 
-#ifdef MAP_IS_ISOMETRIC
-//Tiles pixel size
-# define TILESIZE_X 64
-# define TILESIZE_Y 32
-#else
-//Tiles pixel size
-# define TILESIZE_X 64
-# define TILESIZE_Y 64
-#endif
+//#if GameOptions::s_MapIsIsometric
+////Tiles pixel size
+//# define GameOptions::s_TileSizeX 0
+//# define GameOptions::s_TileSizeY 0
+//#else
+////Tiles pixel size
+//# define GameOptions::s_TileSizeX 0
+//# define GameOptions::s_TileSizeY 0
+//#endif
+
+
 
 #include <geModule.h>
 #include <geVector2I.h>
 #include <geVector2.h>
 #include <geColor.h>
+
+#include <lua.hpp>
 
 using namespace geEngineSDK;
 
@@ -26,7 +30,18 @@ class GameOptions : public Module<GameOptions>
   //Application values
   static Vector2I s_Resolution;
   static Vector2 s_MapMovementSpeed;
+  static Vector2I s_CameraPosition;
 
+  static bool s_MapIsIsometric;
+
+  static int s_TileSizeX;
+  static int s_TileSizeY;
+
+  static int s_MapSizeX;
+  static int s_MapSizeY;
+
+  static bool s_bFullScreen;
+  static String s_windowName;
   //World Values
 
   //Map Values
@@ -34,9 +49,9 @@ class GameOptions : public Module<GameOptions>
   static Color s_MapGridColor;
 
   //Global Constants
-  static const Vector2I TILEHALFSIZE;
-  static const Vector2I BITSFHT_TILEHALFSIZE;
-  static const Vector2I BITSHFT_TILESIZE;
+  static Vector2I TILEHALFSIZE;
+  static Vector2I BITSFHT_TILEHALFSIZE;
+  static Vector2I BITSHFT_TILESIZE;
 };
 
 GameOptions&

@@ -72,9 +72,9 @@ TextureObject::onInit(sf::RenderTarget* pTarget) {
     {
       directionFrame = RTSGame::DIRECTIONS::kW;
     }
-    auto pos = key.find("archer");
+    auto pos = key.find("crossbow");
     if (std::string::npos != pos ) {
-      addUnitFrame("archer", key, tempTexDara, directionFrame);
+      addUnitFrame("crossbow", key, tempTexDara, directionFrame);
     }
     pos = key.find("castilian_knight");
     if (std::string::npos != pos)
@@ -154,7 +154,7 @@ void TextureObject::addUnitFrame(const std::string & unitName, const std::string
 
    TextureData  tempTexDaraRotate= tempTexDara;
    tempTexDaraRotate.rotated = true;
-  if ("archer" == unitName)
+  if ("crossbow" == unitName)
   {
     auto pos = frameName.find("idle");
     if (std::string::npos != pos) {

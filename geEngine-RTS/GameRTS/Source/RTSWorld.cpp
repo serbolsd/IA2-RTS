@@ -22,7 +22,7 @@ RTSWorld::init(sf::RenderTarget* pTarget) {
   //Initialize the map (right now it's an empty map)
   m_pTiledMap = ge_new<RTSTiledMap>();
   GE_ASSERT(m_pTiledMap);
-  m_pTiledMap->init(m_pTarget, Vector2I(256, 256));
+  m_pTiledMap->init(m_pTarget, Vector2I(GameOptions::s_MapSizeX, GameOptions::s_MapSizeY));
   //m_pTiledMap->init(m_pTarget, Vector2I(10, 10));
 
   //Create the path finding classes and push them to the walker list

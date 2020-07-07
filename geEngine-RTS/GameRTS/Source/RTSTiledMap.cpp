@@ -1,6 +1,7 @@
 #include "RTSTiledMap.h"
 #include "RTSTexture.h"
-
+#include "RTSFunctionsCoords.h"
+#include "RTSTree.h"
 #include <geDebug.h>
 #include <geColor.h>
 
@@ -18,6 +19,10 @@ RTSTiledMap::RTSTiledMap(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
 
 RTSTiledMap::~RTSTiledMap() {
   destroy();
+  for (int i = 0; i < m_objects.size(); i++)
+  {
+    delete m_objects[i];
+  }
 }
 
 bool
@@ -29,9 +34,15 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
   m_pTarget = pTarget;
 
   m_mapGrid.resize(mapSize.x * mapSize.y);
-  m_mapGridCopy = m_mapGrid;
   m_mapGridVisited.resize(mapSize.x * mapSize.y);
   m_mapSize = mapSize;
+  for (int32 iterX = 0; iterX < m_mapSize.x; ++iterX) {
+    for (int32 iterY = 0; iterY < m_mapSize.y; ++iterY) {
+      m_mapGrid[iterY*mapSize.x + iterX].setIndexOnGrid(iterX, iterY);
+    }
+  }
+  m_mapGridCopy = m_mapGrid;
+
   setCameraStartPosition(0, 0);
 
   m_mapTextures.resize(TERRAIN_TYPE::kNumObjects);
@@ -40,19 +51,25 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
   for (uint32 i = 0; i < TERRAIN_TYPE::kNumObjects; ++i) {
     if (TERRAIN_TYPE::kArrow == i)
     {
-#ifdef MAP_IS_ISOMETRIC
-      textureName = "Textures/Terrain/iso_Arrow.png";
-#else
-      textureName = "Textures/Terrain/Arrow.png";
-#endif
+      if (GameOptions::s_MapIsIsometric)
+      {
+        textureName = "Textures/Terrain/iso_Arrow.png";
+      }
+      else
+      {
+        textureName = "Textures/Terrain/Arrow.png";
+      }
     }
     else
     {
-#ifdef MAP_IS_ISOMETRIC
-      textureName = "Textures/Terrain/iso_terrain_" + toString(i) + ".png";
-#else
-      textureName = "Textures/Terrain/terrain_" + toString(i) + ".png";
-#endif
+      if (GameOptions::s_MapIsIsometric)
+      {
+        textureName = "Textures/Terrain/iso_terrain_" + toString(i) + ".png";
+      }
+      else
+      {
+        textureName = "Textures/Terrain/terrain_" + toString(i) + ".png";
+      }
     }
     m_mapTextures[i].loadFromFile(m_pTarget, textureName);
   }
@@ -73,13 +90,29 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
 
 void
 RTSTiledMap::destroy() {
+  for (size_t i = 0; i < m_mapSize.x; i++)
+  {
+    for (size_t j = 0; j < m_mapSize.y; j++)
+    {
+      for (size_t o = 0; o < m_mapGrid[j*m_mapSize.x + i].m_myObject.size(); o++)
+      {
+        if (nullptr!=m_mapGrid[j*m_mapSize.x + i].m_myObject[o])
+        {
+          delete m_mapGrid[j*m_mapSize.x + i].m_myObject[o];
+        }
+      }
+    }
+
+  }
   m_mapGrid.clear();
+  m_mapGridCopy.clear();
   m_mapTextures.clear();
 
   m_mapSize = Vector2I::ZERO;
   setCameraStartPosition(0, 0);
   preCalc();
   m_stateMachine.onDelete();
+
 }
 
 int8
@@ -123,16 +156,26 @@ RTSTiledMap::setCameraStartPosition(const int32 x, const int32 y) {
   Vector2I tmpPos(x, y);
   tmpPos.x = Math::clamp(tmpPos.x, Vector2I::ZERO.x, m_PreCalc_MaxCameraCoord.x);
   tmpPos.y = Math::clamp(tmpPos.y, Vector2I::ZERO.y, m_PreCalc_MaxCameraCoord.y);
+  if (m_iCamera != tmpPos)
+  {
+    m_bTileDrawn.clear();
+    m_bTileDrawn.resize(m_mapSize.x*m_mapSize.y);
+  }
   m_iCamera = tmpPos;
+  GameOptions::s_CameraPosition = m_iCamera;
 
-#ifdef MAP_IS_ISOMETRIC
-  m_PreCalc_ScreenDeface.x = m_scrStart.x + m_PreCalc_MidResolution.x -
-                               (m_iCamera.x - m_iCamera.y);
-  m_PreCalc_ScreenDeface.y = m_scrStart.y + m_PreCalc_MidResolution.y -
-                               ((m_iCamera.x + m_iCamera.y) >> 1);
-#else
-  m_PreCalc_ScreenDeface = m_scrStart + m_PreCalc_MidResolution - m_iCamera;
-#endif
+  if (GameOptions::s_MapIsIsometric)
+  {
+    m_PreCalc_ScreenDeface.x = m_scrStart.x + m_PreCalc_MidResolution.x -
+      (m_iCamera.x - m_iCamera.y);
+    m_PreCalc_ScreenDeface.y = m_scrStart.y + m_PreCalc_MidResolution.y -
+      ((m_iCamera.x + m_iCamera.y) >> 1);
+  }
+  else 
+  {
+    m_PreCalc_ScreenDeface = m_scrStart + m_PreCalc_MidResolution - m_iCamera;
+  }
+  COORDS::PreCalc_ScreenDeface = m_PreCalc_ScreenDeface;
 }
 
 void
@@ -140,16 +183,19 @@ RTSTiledMap::getScreenToMapCoords(const int32 scrX,
                                   const int32 scrY,
                                   int32 &mapX,
                                   int32 &mapY) {
-#ifdef MAP_IS_ISOMETRIC
-  float fscrX = ((float)(scrX - m_PreCalc_ScreenDeface.x) / GameOptions::TILEHALFSIZE.x) - 1;
-  float fscrY = ((float)(scrY - m_PreCalc_ScreenDeface.y) / GameOptions::TILEHALFSIZE.y);
+  if (GameOptions::s_MapIsIsometric)
+  {
+    float fscrX = ((float)(scrX - m_PreCalc_ScreenDeface.x) / GameOptions::TILEHALFSIZE.x) - 1;
+    float fscrY = ((float)(scrY - m_PreCalc_ScreenDeface.y) / GameOptions::TILEHALFSIZE.y);
 
-  mapX = (Math::trunc(fscrX + fscrY)) >> 1;
-  mapY = (Math::trunc(fscrY - fscrX)) >> 1;
-#else
-  mapX = (scrX - m_PreCalc_ScreenDeface.x) >> GameOptions::BITSHFT_TILESIZE.x;
-  mapY = (scrY - m_PreCalc_ScreenDeface.y) >> GameOptions::BITSHFT_TILESIZE.y;
-#endif
+    mapX = (Math::trunc(fscrX + fscrY)) >> 1;
+    mapY = (Math::trunc(fscrY - fscrX)) >> 1;
+  }
+  else
+  {
+    mapX = (scrX - m_PreCalc_ScreenDeface.x) >> GameOptions::BITSHFT_TILESIZE.x;
+    mapY = (scrY - m_PreCalc_ScreenDeface.y) >> GameOptions::BITSHFT_TILESIZE.y;
+  }
 
   mapX = Math::clamp(mapX, 0, m_mapSize.x - 1);
   mapY = Math::clamp(mapY, 0, m_mapSize.y - 1);
@@ -162,16 +208,19 @@ RTSTiledMap::getMapToScreenCoords(const int32 mapX,//para imprimir convierte en 
                                   int32 &scrY) {
   GE_ASSERT(mapX >= 0 && mapX <= m_mapSize.x && mapY >= 0 && mapY <= m_mapSize.y);
 
-#ifdef MAP_IS_ISOMETRIC
-  scrX = (mapX - mapY) << GameOptions::BITSFHT_TILEHALFSIZE.x;
-  scrY = (mapX + mapY) << GameOptions::BITSFHT_TILEHALFSIZE.y;
-
-  scrX += m_PreCalc_ScreenDeface.x;
-  scrY += m_PreCalc_ScreenDeface.y;
-#else
-  scrX = (mapX << GameOptions::BITSHFT_TILESIZE.x) + m_PreCalc_ScreenDeface.x;
-  scrY = (mapY << GameOptions::BITSHFT_TILESIZE.y) + m_PreCalc_ScreenDeface.y;
-#endif
+  if (GameOptions::s_MapIsIsometric)
+  {
+    scrX = (mapX - mapY) << GameOptions::BITSFHT_TILEHALFSIZE.x;
+    scrY = (mapX + mapY) << GameOptions::BITSFHT_TILEHALFSIZE.y;
+  
+    scrX += m_PreCalc_ScreenDeface.x;
+    scrY += m_PreCalc_ScreenDeface.y;
+  }
+  else
+  {
+    scrX = (mapX << GameOptions::BITSHFT_TILESIZE.x) + m_PreCalc_ScreenDeface.x;
+    scrY = (mapY << GameOptions::BITSHFT_TILESIZE.y) + m_PreCalc_ScreenDeface.y;
+  }
 }
 
 sf::Vector2f RTSTiledMap::getMousePosOnRenderTarget()
@@ -202,8 +251,12 @@ void RTSTiledMap::selecetStartTail()
     m_tileStart->setcolor(m_tileStartColor);
     m_tileStartIndexX = m_tileSelectedIndexX;
     m_tileStartIndexY = m_tileSelectedIndexY;
-    m_archerUnit.m_position = { m_mapGridCopy[m_tileSelectedIndex].getPosition().x,
-                               m_mapGridCopy[m_tileSelectedIndex].getPosition().y };
+    Vector2I pixelPos;
+    COORDS::getTileCenterOnPixelCoords(m_tileSelectedIndexX, m_tileSelectedIndexY, pixelPos.x, pixelPos.y);
+    m_archerUnit.m_position = { float(pixelPos.x), float(pixelPos.y) };
+    m_archerUnit.m_lasTile = { m_tileSelectedIndexX ,m_tileSelectedIndexY };
+    m_archerUnit.m_bOnMap = true;
+    //m_tileStart->addObject(&m_archerUnit);
   }
   
 }
@@ -227,6 +280,7 @@ void RTSTiledMap::startPathFinding()
 
   clearSearch();
   m_mapGridVisited.resize(m_mapSize.x*m_mapSize.y);           // Tiles visited
+  m_bTileDrawn.resize(m_mapSize.x*m_mapSize.y);
   m_bSearching = true;
 
   int initIndex = m_tileStartIndexY * m_mapSize.x + m_tileStartIndexX;
@@ -235,12 +289,12 @@ void RTSTiledMap::startPathFinding()
     switch (m_eEuristicType)
     {
     case EUCLIDEAN:
-      m_euritic = Vector2::distance(Vector2(m_tileStartIndexX, m_tileStartIndexY),
-        Vector2(m_tileFinishIndexX, m_tileFinishIndexY));
+      m_euritic = Vector2::distance(Vector2(float(m_tileStartIndexX), float(m_tileStartIndexY)),
+        Vector2(float(m_tileFinishIndexX), float(m_tileFinishIndexY)));
       break;
     case SQUAREDISTANCE:
-      m_euritic = Vector2::distSquared(Vector2(m_tileStartIndexX, m_tileStartIndexY),
-        Vector2(m_tileFinishIndexX, m_tileFinishIndexY));
+      m_euritic = Vector2::distSquared(Vector2(float(m_tileStartIndexX), float(m_tileStartIndexY)),
+        Vector2(float(m_tileFinishIndexX), float(m_tileFinishIndexY)));
       break;
     case MANHATTAN:
       break;
@@ -338,50 +392,81 @@ void RTSTiledMap::addTree()
 {
   if (m_tileSelectedIndex >= 0)
   {
-    Object tmpObject;
-    tmpObject.setTile(&m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX]);
+    RTSTree* tmpObject=new RTSTree;
+
+    tmpObject->setTile(m_tileSelectedIndexX, m_tileSelectedIndexY);
     /* initialize random seed: */
     srand(time(NULL));
 
     /* generate secret number between 1 and 10: */
     int id = rand() % m_textureObjects.getTesturesTreesData().size();
-    tmpObject.setIDofData(id);
+    tmpObject->setIDofData(id);
+    tmpObject->setType(TYPEOBJECT::TREE);
+    tmpObject->setTextures(&m_textureObjects.getTesturesTrees());
+    tmpObject->setTextureData(m_textureObjects.getTesturesTreesData()[id]);
 
     m_objects.push_back(tmpObject);
     m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].addObject(tmpObject);
-
     m_mapGridCopy.clear();
     m_mapGridCopy = m_mapGrid;
   }
 }
 
-void RTSTiledMap::drawTailOutline(const int & tailIndex,const sf::Color & outlineColor)
+void RTSTiledMap::propagateInfluence()
 {
-  sf::Vector2f tailPos = m_mapGridCopy[tailIndex].getPosition();
+  //for (size_t i = 0; i < m_mapGrid.size(); ++i)
+  //{
+  //  float maxInf = 0.0f;
+  //  MapTile& connections = m_mapGrid[i];
+  //  {
+  //    float inf = m_Influences[c.neighbor] * expf(-c.dist * m_fDecay);
+  //    maxInf = std::max(inf, maxInf);
+  //  }
+  //
+  //  m_Influences = lerp(m_Influences, maxInf, m_fMomentum);
+  //}
+}
+
+void RTSTiledMap::drawTailOutline(const int & tailIndexX, const int & tailIndexY,const sf::Color & outlineColor)
+{
+  Vector2I tempceneterPos;
+  Vector2 tempScrnPos;
+  COORDS::getTileCenterOnPixelCoords(tailIndexX,
+    tailIndexY,
+    tempceneterPos.x,
+    tempceneterPos.y);
+  COORDS::getPixelToScreenCoords(tempceneterPos.x,
+    tempceneterPos.y,
+    tempScrnPos.x,
+    tempScrnPos.y);
+  sf::Vector2f tailPos = { tempScrnPos.x, tempScrnPos.y};
   if (m_outLineTail.size()<=0)
   {
     m_outLineTail.resize(5);
   }
-#ifdef MAP_IS_ISOMETRIC
-  m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
-  m_outLineTail[0].position.y = tailPos.y;
-  m_outLineTail[1].position.x = tailPos.x;
-  m_outLineTail[1].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
-  m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
-  m_outLineTail[2].position.y = tailPos.y;
-  m_outLineTail[3].position.x = tailPos.x;
-  m_outLineTail[3].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
-#else
+  if (GameOptions::s_MapIsIsometric)
+  {
+    m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
+    m_outLineTail[0].position.y = tailPos.y;
+    m_outLineTail[1].position.x = tailPos.x;
+    m_outLineTail[1].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
+    m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
+    m_outLineTail[2].position.y = tailPos.y;
+    m_outLineTail[3].position.x = tailPos.x;
+    m_outLineTail[3].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+  }
+  else
+  {
+    m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
+    m_outLineTail[0].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+    m_outLineTail[1].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
+    m_outLineTail[1].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
+    m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
+    m_outLineTail[2].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
+    m_outLineTail[3].position.x = tailPos.x - GameOptions::TILEHALFSIZE.y;
+    m_outLineTail[3].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
+  }
 
-  m_outLineTail[0].position.x = tailPos.x - GameOptions::TILEHALFSIZE.x;
-  m_outLineTail[0].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
-  m_outLineTail[1].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
-  m_outLineTail[1].position.y = tailPos.y + GameOptions::TILEHALFSIZE.y;
-  m_outLineTail[2].position.x = tailPos.x + GameOptions::TILEHALFSIZE.x;
-  m_outLineTail[2].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
-  m_outLineTail[3].position.x = tailPos.x - GameOptions::TILEHALFSIZE.y;
-  m_outLineTail[3].position.y = tailPos.y - GameOptions::TILEHALFSIZE.y;
-#endif
   m_outLineTail[0].color = outlineColor;
   m_outLineTail[1].color = outlineColor;
   m_outLineTail[2].color = outlineColor;
@@ -573,7 +658,7 @@ void RTSTiledMap::BestFirstSearch()
     if (nuevox >= 0 && nuevox < m_mapSize.x && nuevoy >= 0 && nuevoy < m_mapSize.y) {    // Revisamos que esté en los límites
       if (!m_mapGridVisited[nuevoy *m_mapSize.x + nuevox]&&nullptr==m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getParent()&&
         TERRAIN_TYPE::kObstacle !=m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].getType()) {  // Revisamos que no esté visitado y que no sea pared
-        float eu= Vector2::distance(Vector2(nuevox, nuevoy), Vector2(m_tileFinishIndexX, m_tileFinishIndexY));
+        float eu= Vector2::distance(Vector2(float(nuevox), float(nuevoy)), Vector2(float(m_tileFinishIndexX), float(m_tileFinishIndexY)));
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGridCopy[actualIndY *m_mapSize.x + actualIndX]);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndex(nuevoy *m_mapSize.x + nuevox);
         m_mapGridCopy[nuevoy *m_mapSize.x + nuevox].setIndexOnGrid(nuevox, nuevoy);
@@ -583,10 +668,10 @@ void RTSTiledMap::BestFirstSearch()
       }
     }
   }
-  int n = Nodes.size();
-  for (int i = 0; i < n; i++)
+  size_t n = Nodes.size();
+  for (size_t i = 0; i < n; i++)
   {
-    for (int j = 0; j < n; j++)
+    for (size_t j = 0; j < n; j++)
     {
       if (Nodes[i]->getEuristic() > Nodes[j]->getEuristic())
       {
@@ -596,7 +681,7 @@ void RTSTiledMap::BestFirstSearch()
       }
     }
   }
-  for (int i = 0; i < n; i++)
+  for (size_t i = 0; i < n; i++)
   {
     m_pathStack.push_front(Nodes[i]);
   }
@@ -699,7 +784,7 @@ void RTSTiledMap::AstarSearch()
           {
             m_aStar.erase(it);
           }
-          float eu = Vector2::distance(Vector2(nuevox, nuevoy), Vector2(m_tileFinishIndexX, m_tileFinishIndexY));
+          float eu = Vector2::distance(Vector2(float(nuevox), float(nuevoy)), Vector2(float(m_tileFinishIndexX), float(m_tileFinishIndexY)));
           m_mapGridCopy[nuevoIndex].setTentativeCost(tentativeCost*m_costRelevance);
           m_mapGridCopy[nuevoIndex].setEuristic(eu*m_euristicRelevance);
           m_mapGridCopy[nuevoIndex].setParent(&m_mapGridCopy[actualIndex]);
@@ -762,10 +847,21 @@ void RTSTiledMap::returnLinePath()
   }
   while (m_linePathTile != nullptr)
   {
-    if (m_mapGridCopy[m_linePathTile->getIndex()].m_bDrawing)
+    if (m_bTileDrawn[m_linePathTile->getIndex()])
     {
       sf::Vertex newVertes;
-      newVertes.position = m_linePathTile->getPosition();
+      Vector2I tempPixelPos;
+      Vector2 tempScrnPos;
+      COORDS::getTileCenterOnPixelCoords(m_linePathTile->getIndexGridX(),
+                                         m_linePathTile->getIndexGridY(),
+                                         tempPixelPos.x,
+                                         tempPixelPos.y);
+      COORDS::getPixelToScreenCoords(tempPixelPos.x,
+                                     tempPixelPos.y,
+                                     tempScrnPos.x,
+                                     tempScrnPos.y);
+
+      newVertes.position = { float(tempScrnPos.x), float(tempScrnPos.y) };
       m_PathLineTail.push_back(newVertes);
     }
     setArrow();
@@ -793,6 +889,8 @@ void RTSTiledMap::clearSearch()
   m_BTPathLine.clear();
   m_lastPendiente = { 0,0 };
   m_pCurrentBTTailNode = nullptr;
+  m_BresenhammapPathRegisterTail.clear();
+  m_BresenhamPathLineTail.clear();
 }
 
 void RTSTiledMap::backTracking()
@@ -813,18 +911,23 @@ void RTSTiledMap::backTracking()
     }
     m_BTmapPathRegisterTail.clear();
     m_BTPathLine.push_back(m_pCurrentBTTailNode);
-    Vector2 point;
+    Vector2I point;
     for (int i = 0; i < m_BTPathLine.size(); i++)
     {
       m_BTPathLine[i]->setcolor(m_BTTileColor);
       
     }
+    m_BresenhammapPathRegisterTail = m_BTPathLine;
+    m_archerUnit.m_pathToFollow.clear();
     for (int i = m_BTPathLine.size() - 1; i > -1; --i)
     {
-      point = { m_BTPathLine[i]->getPosition().x,m_BTPathLine[i]->getPosition().y };
-      m_archerUnit.m_pathToFollow.push_back(point);
+      Vector2I tempPoint;
+      point = { m_BTPathLine[i]->getIndexGridX(),m_BTPathLine[i]->getIndexGridY() };
+      COORDS::getTileCenterOnPixelCoords(point.x, point.y, tempPoint.x, tempPoint.y);
+      m_archerUnit.m_pathToFollow.push_back(Vector2(float(tempPoint.x), float(tempPoint.y)));
     }
     m_bGetPathBT = false;
+    m_bBresenhamLine = true;
     m_archerUnit.m_bHaveObjetive = true;
     return;
   }
@@ -853,18 +956,172 @@ void RTSTiledMap::backTracking()
   m_pCurrentBTTailNode->setcolor(m_BTTileColor);
 }
 
+void RTSTiledMap::returnBresenhamLinePath()
+{
+  if (m_BresenhammapPathRegisterTail.size()==0)
+  {
+    return;
+  }
+  float m;
+  Vector2 linea;
+  int lasTile = m_BresenhammapPathRegisterTail.size() - 1;
+
+  sf::Vertex newVertes;
+  Vector2I tempPixelPos;
+  Vector2 tempScrnPos;
+  
+
+  MapTile* tmpTileA = m_BresenhammapPathRegisterTail[lasTile];
+  MapTile* tmpTileB = m_BresenhammapPathRegisterTail[0]; 
+  linea = { float(tmpTileB->getIndexGridX()) - float(tmpTileA->getIndexGridX()),
+            float(tmpTileB->getIndexGridY()) - float(tmpTileA->getIndexGridY()) };
+  int dx = linea.x;
+  int dy = linea.y;
+  int x = tmpTileA->getIndexGridX();
+  int x1 = tmpTileB->getIndexGridX();
+  int y = tmpTileA->getIndexGridY();
+  int y1 = tmpTileB->getIndexGridY();
+  m_BresenhamPathLineTail.clear();
+  int p = 2 * dy - dx;
+  m = linea.size();
+  if (x < x1)
+  {
+    if (y < y1)
+    {
+      p = 2 * dy - dx;
+    }
+    else
+    {
+      p = 2 * (-dy) - dx;
+    }
+    while (x < x1)
+    {
+      COORDS::getTileCenterOnPixelCoords(x,
+        y,
+        tempPixelPos.x,
+        tempPixelPos.y);
+      COORDS::getPixelToScreenCoords(tempPixelPos.x,
+        tempPixelPos.y,
+        tempScrnPos.x,
+        tempScrnPos.y);
+
+      newVertes.position = { float(tempScrnPos.x), float(tempScrnPos.y) };
+      m_BresenhamPathLineTail.push_back(newVertes);
+      if (p >= 0)
+      {
+        if (y < y1)
+        {
+          y = y + 1;  
+          if (y > m_mapSize.y)
+          {
+            y > m_mapSize.y;
+          }
+          p = p + 2 * (dy) - 2 * dx;
+        }
+        else
+        {
+          y = y - 1;
+          if (y < 0)
+          {
+            y = 0;
+          }
+          p = p + 2 * (-dy) - 2 * dx;
+        }
+      }
+      else
+      {
+        if (y < y1)
+        {
+          p = p + 2 * dy;
+        }
+        else
+        {
+          p = p + 2 * (-dy);
+        }
+
+      }
+      x = x + 1;
+    }
+  }
+  else
+  {
+    if (y < y1)
+    {
+      p = 2 * dy - dx;
+    }
+    else
+    {
+      p = 2 * (-dy) - dx;
+    }
+    while (x > x1)
+    {
+      COORDS::getTileCenterOnPixelCoords(x,
+        y,
+        tempPixelPos.x,
+        tempPixelPos.y);
+      COORDS::getPixelToScreenCoords(tempPixelPos.x,
+        tempPixelPos.y,
+        tempScrnPos.x,
+        tempScrnPos.y);
+
+      newVertes.position = { float(tempScrnPos.x), float(tempScrnPos.y) };
+      m_BresenhamPathLineTail.push_back(newVertes);
+      if (p >= 0)
+      {
+        if (y < y1)
+        {
+          y = y + 1;
+          if (y>m_mapSize.y)
+          {
+            y > m_mapSize.y;
+          }
+          p = p + 2 * (dy) + 2 * dx;
+        }
+        else
+        {
+          y = y - 1;
+          if (y<0)
+          {
+            y = 0;
+          }
+          p = p + 2 * (-dy) - 2 * dx;
+        }
+      }
+      else
+      {
+        if (y < y1)
+        {
+          p = p + 2 * dy;
+        }
+        else
+        {
+          p = p + 2 * (-dy);
+        }
+      }
+      x = x - 1;
+    }
+  }
+
+
+
+  COORDS::getTileCenterOnPixelCoords(x,
+    y,
+    tempPixelPos.x,
+    tempPixelPos.y);
+  COORDS::getPixelToScreenCoords(tempPixelPos.x,
+    tempPixelPos.y,
+    tempScrnPos.x,
+    tempScrnPos.y);
+
+  newVertes.position = { float(tempScrnPos.x), float(tempScrnPos.y) };
+  m_BresenhamPathLineTail.push_back(newVertes);
+
+  m_bBresenhamLine = false;
+}
+
 void RTSTiledMap::updateTileColor()
 {
-  //if (nullptr != m_tileSelected)
-  //{
-  //  m_tileSelected->setcolor(m_NormalTileColor.r, m_NormalTileColor.g, m_NormalTileColor.b, m_NormalTileColor.a);
-  //}
-  //if (m_tileSelectedIndex >= 0)
-  //{
-  //  m_tileSelected = &m_mapGridCopy[m_tileSelectedIndex];
-  //  m_tileSelected->setcolor(m_selectingTileColor.r, m_selectingTileColor.g, 
-  //                           m_selectingTileColor.b, m_selectingTileColor.a);
-  //}
+
   if (nullptr != m_tileStart)
   {
     m_tileStart->setcolor(m_tileStartColor);
@@ -873,6 +1130,34 @@ void RTSTiledMap::updateTileColor()
   {
     m_tileFinish->setcolor(m_tileFinishColor);
   }
+}
+
+void RTSTiledMap::deleteObjectInTile(Object * _object, int32 tilex, int32 tiley)
+{
+  if (tiley < 0 || tilex > m_mapSize.x || tiley < 0 || tiley > m_mapSize.x)
+  {
+    return;
+  }
+  MapTile* tmpTile = &m_mapGrid[tiley*m_mapSize.x + tilex];
+
+  for (int i = 0; i < tmpTile->m_myObject.size(); i++)
+  {
+    if (tmpTile->m_myObject[i]==_object)
+    {
+      tmpTile->m_myObject.erase(tmpTile->m_myObject.begin() + i);
+      return;
+    }
+  }
+}
+
+void RTSTiledMap::insetObjectInTile(Object * _object, int32 tilex, int32 tiley)
+{
+  if (tiley < 0 || tilex > m_mapSize.x || tiley < 0 || tiley > m_mapSize.x)
+  {
+    return;
+  }
+  MapTile* tmpTile = &m_mapGrid[tiley*m_mapSize.x + tilex];
+  tmpTile->addObject(_object);
 }
 
 void
@@ -914,10 +1199,16 @@ RTSTiledMap::update(float deltaTime) {
     {
       backTracking();
     }
+    //if (m_bBresenhamLine)
+    //{
+    //  returnBresenhamLinePath();
+    //}
     m_currenttimeToNext = 0.0f;
   }
   returnLinePath();
-  m_archerUnit.onUpdate(deltaTime);
+  returnBresenhamLinePath();
+  m_archerUnit.onUpdate(deltaTime,*this);
+  
 }
 
 void
@@ -930,69 +1221,68 @@ RTSTiledMap::render() {
   int32 tileIniX = 0, tileIniY = 0;
   int32 tileFinX = 0, tileFinY = 0;
 
-#ifdef MAP_IS_ISOMETRIC
-  int32 trashCoord = 0;
-  getScreenToMapCoords(m_scrStart.x, m_scrStart.y, tileIniX, trashCoord);
-  getScreenToMapCoords(m_scrEnd.x, m_scrEnd.y, tileFinX, trashCoord);
+  if (GameOptions::s_MapIsIsometric)
+  {
+    int32 trashCoord = 0;
+    getScreenToMapCoords(m_scrStart.x, m_scrStart.y, tileIniX, trashCoord);
+    getScreenToMapCoords(m_scrEnd.x, m_scrEnd.y, tileFinX, trashCoord);
 
-  getScreenToMapCoords(m_scrEnd.x, m_scrStart.y, trashCoord, tileIniY);
-  getScreenToMapCoords(m_scrStart.x, m_scrEnd.y, trashCoord, tileFinY);
-#else
-  getScreenToMapCoords(m_scrStart.x, m_scrStart.y, tileIniX, tileIniY);
-  getScreenToMapCoords(m_scrEnd.x, m_scrEnd.y, tileFinX, tileFinY);
-#endif
+    getScreenToMapCoords(m_scrEnd.x, m_scrStart.y, trashCoord, tileIniY);
+    getScreenToMapCoords(m_scrStart.x, m_scrEnd.y, trashCoord, tileFinY);
+  }
+  else
+  {
+    getScreenToMapCoords(m_scrStart.x, m_scrStart.y, tileIniX, tileIniY);
+    getScreenToMapCoords(m_scrEnd.x, m_scrEnd.y, tileFinX, tileFinY);
+  }
   sf::Vector2f mousePosition = getMousePosOnRenderTarget();
   m_tileSelectedIndex = -1;
   int32 tailSelectedY = -1;
   int32 iterTailSelectedY = -1;
   int32 tailSelectedX = -1;
   int32 iterTailSelectedX = -1;
-  bool tileAreadySelect = false;
-
   for (int32 iterX = tileIniX; iterX <= tileFinX; ++iterX) {
     for (int32 iterY = tileIniY; iterY <= tileFinY; ++iterY) {
 
       getMapToScreenCoords(iterX, iterY, tmpX, tmpY);
       if (tmpX > m_scrEnd.x ||
         tmpY > m_scrEnd.y ||
-        (tmpX + TILESIZE_X) < m_scrStart.x ||
-        (tmpY + TILESIZE_Y) < m_scrStart.y) {
-        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
-        m_mapGrid[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
+        (tmpX + GameOptions::s_TileSizeX) < m_scrStart.x ||
+        (tmpY + GameOptions::s_TileSizeY) < m_scrStart.y) {
         continue;
       }
-      m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
-      m_mapGrid[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+      int currentIndex= (iterY*m_mapSize.x) + iterX;
+      m_bTileDrawn[currentIndex] = true;
       if (tmpX < mousePosition.x&&
-         tmpX + TILESIZE_X > mousePosition.x&&
+         tmpX + GameOptions::s_TileSizeX > mousePosition.x&&
          tmpY  < mousePosition.y&&
-         tmpY + TILESIZE_Y > mousePosition.y)
+         tmpY + GameOptions::s_TileSizeY > mousePosition.y)
        {
          m_tileSelectedIndexY = iterTailSelectedY = iterY;
          m_tileSelectedIndexX = iterTailSelectedX = iterX;
          tailSelectedY = tmpY + GameOptions::TILEHALFSIZE.y;
          tailSelectedX = tmpX + GameOptions::TILEHALFSIZE.x;
-         m_tileSelectedIndex = (iterY*m_mapSize.x) + iterX;
+         m_tileSelectedIndex = currentIndex;
        }
-       m_mapGridCopy[(iterY*m_mapSize.x) + iterX].setPosition(
-        static_cast<float>( tmpX + GameOptions::TILEHALFSIZE.x),
-        static_cast<float>(tmpY + GameOptions::TILEHALFSIZE.y));
-       tmpTypeTile = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getType();
+       m_mapGridCopy[currentIndex].setPosition(
+        static_cast<float>( tmpX ),
+        static_cast<float>(tmpY));
+       tmpTypeTile = m_mapGridCopy[currentIndex].getType();
        RTSTexture& refTexture = m_mapTextures[tmpTypeTile];
 
        clipRect.x = (iterX << GameOptions::BITSHFT_TILESIZE.x) % refTexture.getWidth();
        clipRect.y = (iterY << GameOptions::BITSHFT_TILESIZE.y) % refTexture.getHeight();
        
        refTexture.setPosition(tmpX, tmpY);
-       sf::Color tmpColor = m_mapGridCopy[(iterY*m_mapSize.x) + iterX].getColor();
+       sf::Color tmpColor = m_mapGridCopy[currentIndex].getColor();
        refTexture.setColor(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
-       refTexture.setSrcRect(clipRect.x, clipRect.y, TILESIZE_X, TILESIZE_Y);
-       //m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+       refTexture.setSrcRect(clipRect.x, clipRect.y, GameOptions::s_TileSizeX, GameOptions::s_TileSizeY);
+       //m_mapGridCopy[currentIndex].m_bDrawing = true;
        
        refTexture.draw();
-       for (int i = 0; i < m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
-         m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
-       }
+       //for (int i = 0; i < m_mapGrid[currentIndex].m_myObject.size(); i++) {
+       //  m_mapGrid[currentIndex].m_myObject[i]->drawObject(m_textureObjects, tmpX, tmpY);
+       //}
     }
   }
 
@@ -1002,16 +1292,30 @@ RTSTiledMap::render() {
       getMapToScreenCoords(iterX, iterY, tmpX, tmpY);
       if (tmpX > m_scrEnd.x ||
         tmpY > m_scrEnd.y ||
-        (tmpX + TILESIZE_X) < m_scrStart.x ||
-        (tmpY + TILESIZE_Y) < m_scrStart.y) {
-        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = false;
+        (tmpX + GameOptions::s_TileSizeX) < m_scrStart.x ||
+        (tmpY + GameOptions::s_TileSizeY) < m_scrStart.y) {
         continue;
       }
-
-      for (int i = 0; i < m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject.size(); i++) {
-        m_mapGrid[(iterY*m_mapSize.x) + iterX].m_myObject[i].drawObject(m_textureObjects, tmpX, tmpY);
+      int currentIndex = (iterY*m_mapSize.x) + iterX;
+      for (int i = 0; i < m_mapGrid[currentIndex].m_myObject.size(); i++) {
+        Object *tmpObject = m_mapGrid[currentIndex].m_myObject[i];
+        RTSUnit *tmpUnit;
+        RTSTree *tmpTree;
+        switch (tmpObject->getType())
+        {
+        case TYPEOBJECT::UNIT:
+          tmpUnit = static_cast<RTSUnit*>(tmpObject);
+          tmpUnit->draw();
+          break;
+        case TYPEOBJECT::TREE:
+          tmpTree = static_cast<RTSTree*>(tmpObject);
+          tmpTree->draw();
+          break;
+        default:
+          break;    
+        }
       }
-      if (m_mapGridCopy[(iterY*m_mapSize.x) + iterX].hadArrow)
+      if (m_mapGridCopy[currentIndex].hadArrow)
       {
         RTSTexture& refTexture = m_mapTextures[TERRAIN_TYPE::kArrow];
 
@@ -1020,62 +1324,35 @@ RTSTiledMap::render() {
 
         refTexture.setPosition(tmpX+ GameOptions::TILEHALFSIZE.x, tmpY+ GameOptions::TILEHALFSIZE.y);
         refTexture.setOrigin(refTexture.getWidth()*0.5f, refTexture.getWidth()*0.5f);
-        switch (m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_directionArrow)    
+        switch (m_mapGridCopy[currentIndex].m_directionArrow)    
         { 
         case ARROW_TYPE::kRight:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(0.0f));
-#endif
           break;
         case ARROW_TYPE::kRightDown:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(45));
-#endif
           break;
         case ARROW_TYPE::kDown:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(90));
-#endif
           break;
         case ARROW_TYPE::kLeftDown:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(135));
-#endif
           break;
         case ARROW_TYPE::kLeft:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(180));
-#endif
           break;
         case ARROW_TYPE::kLeftUp:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(225));
-#endif
           break;
         case ARROW_TYPE::kUp:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(270));
-#endif
           break;
         case ARROW_TYPE::kRightUp:
-#ifdef MAP_IS_ISOMETRIC
-#else
           refTexture.setRotation(Degree(315));
-#endif
           break;
         default:
           break;
         }
-
-        m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
-
         refTexture.draw();
       }
     }
@@ -1091,66 +1368,76 @@ RTSTiledMap::render() {
     for (int32 iterX = tileIniX; iterX <= tileFinX + 1; ++iterX) {
       getMapToScreenCoords(iterX, tileIniY, tmpX, tmpY);
       getMapToScreenCoords(iterX, tileFinY, tmpX2, tmpY2);
-#ifdef MAP_IS_ISOMETRIC
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX + GameOptions::TILEHALFSIZE.x),
-                     static_cast<float>(tmpY)),
-        gridColor));
-      
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX2),
-                     static_cast<float>(tmpY2 + GameOptions::TILEHALFSIZE.y)),
-        gridColor));
-#else
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX), static_cast<float>(tmpY)),
-        gridColor));
+      if (GameOptions::s_MapIsIsometric)
+      {
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX + GameOptions::TILEHALFSIZE.x),
+            static_cast<float>(tmpY)),
+          gridColor));
 
-      gridLines.push_back(sf::Vertex(sf::Vector2f(static_cast<float>(tmpX2),
-                                                  static_cast<float>(tmpY2 + TILESIZE_Y)),
-                                     gridColor));
-#endif
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX2),
+            static_cast<float>(tmpY2 + GameOptions::TILEHALFSIZE.y)),
+          gridColor));
+      }
+      else 
+      {
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX), static_cast<float>(tmpY)),
+          gridColor));
+
+        gridLines.push_back(sf::Vertex(sf::Vector2f(static_cast<float>(tmpX2),
+                                                    static_cast<float>(tmpY2 + GameOptions::s_TileSizeY)),
+                                                    gridColor));
+      }
     }
 
     for (int32 iterY = tileIniY; iterY <= tileFinY + 1; ++iterY) {
       getMapToScreenCoords(tileIniX, iterY, tmpX, tmpY);
       getMapToScreenCoords(tileFinX, iterY, tmpX2, tmpY2);
-#ifdef MAP_IS_ISOMETRIC
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX + GameOptions::TILEHALFSIZE.x),
-                     static_cast<float>(tmpY)),
-        gridColor));
+      if (GameOptions::s_MapIsIsometric) 
+      {
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX + GameOptions::TILEHALFSIZE.x),
+                       static_cast<float>(tmpY)),
+                       gridColor));
 
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX2 + TILESIZE_X),
-                     static_cast<float>(tmpY2 + GameOptions::TILEHALFSIZE.y)),
-        gridColor));
-#else
-      gridLines.push_back(sf::Vertex(
-        sf::Vector2f(static_cast<float>(tmpX), static_cast<float>(tmpY)),
-        gridColor));
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX2 + GameOptions::s_TileSizeX),
+                       static_cast<float>(tmpY2 + GameOptions::TILEHALFSIZE.y)),
+                       gridColor));
+      }
+      else
+      {
+        gridLines.push_back(sf::Vertex(
+          sf::Vector2f(static_cast<float>(tmpX), static_cast<float>(tmpY)),
+                       gridColor));
 
-      gridLines.push_back(sf::Vertex(sf::Vector2f(static_cast<float>(tmpX2 + TILESIZE_X),
-                                                  static_cast<float>(tmpY2)),
-                                     gridColor));
-#endif
+        gridLines.push_back(sf::Vertex(sf::Vector2f(static_cast<float>(tmpX2 + GameOptions::s_TileSizeX),
+                                       static_cast<float>(tmpY2)),
+                                       gridColor));
+      }
     }
 
     m_pTarget->draw(&gridLines[0], gridLines.size(), sf::Lines);
   }
   if (m_PathLineTail.size()>0)
   {
-    m_pTarget->draw(&m_PathLineTail[0], m_PathLineTail.size(), sf::LinesStrip);
+    //m_pTarget->draw(&m_PathLineTail[0], m_PathLineTail.size(), sf::LinesStrip);
+  }
+  if (m_BresenhamPathLineTail.size() > 0)
+  {
+    m_pTarget->draw(&m_BresenhamPathLineTail[0], m_BresenhamPathLineTail.size(), sf::LinesStrip);
   }
   {
     m_mouseInWindow.setPosition(mousePosition.x, mousePosition.y);
     m_pTarget->draw(m_mouseInWindow);
     if (m_tileSelectedIndex >= 0)
     {
-      drawTailOutline(m_tileSelectedIndex,m_selectingTileColor);
+      drawTailOutline(m_tileSelectedIndexX,m_tileSelectedIndexY,m_selectingTileColor);
     }
   }
-  m_archerUnit.draw(m_pTarget);
+  //m_archerUnit.draw();
 }
 
 RTSTiledMap::MapTile::MapTile() {

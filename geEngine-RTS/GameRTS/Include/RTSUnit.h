@@ -4,14 +4,16 @@
 #include "UnitsStates.h"
 #include "StateMachine.h"
 
+class RTSTiledMap;
+
 class RTSUnit : public Object
 {
 public:
   RTSUnit() { m_ytpe = TYPEOBJECT::UNIT; };
   ~RTSUnit() {};
   void onInit();
-  void onUpdate(const float& deltaTime);
-  void draw(sf::RenderTarget* m_pTarget);
+  void onUpdate(const float& deltaTime, RTSTiledMap& tileMap);
+  void draw();
  
 
   UNITSSTATES::E
@@ -41,6 +43,7 @@ public:
 
   bool m_bHaveObjetive = false;
   bool m_bNearObjetive = false;
+  bool m_bOnMap = false;
   vector<Vector2> m_pathToFollow;
   Vector2 m_objetivePos;
 
@@ -55,6 +58,10 @@ public:
 
   RTSGame::ANIMATIONS::E m_animation = RTSGame::ANIMATIONS::kIDLE;
   void SetAnimationData(RTSTexture* _rtsTextures, Vector<Animation> animations);
+  int32 m_tileIndexX;
+  int32 m_tileIndexY;
+  Vector2I m_currentTile;
+  Vector2I m_lasTile;
 private:
   void
   UdpateAnimation();
@@ -78,4 +85,5 @@ private:
 
   StateMachine* m_pStateMachine = nullptr;
   unitState* m_pState=nullptr;
+
 };

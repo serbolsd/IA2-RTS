@@ -17,7 +17,7 @@ enum TYPEOBJECT {
 
 class Object {
  public:
-  Object() = default;
+   Object() { m_ytpe = UNKNOWOBJECTTYPE; };
   virtual ~Object() {};
   
   virtual void

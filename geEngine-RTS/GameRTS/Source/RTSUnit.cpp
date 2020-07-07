@@ -1,5 +1,6 @@
 #include "RTSUnit.h"
 #include "RTSTiledMap.h"
+#include "RTSFunctionsCoords.h"
 void RTSUnit::onInit() {
   m_pState = m_pStateMachine->getIdleState();
   string nameAnimation="idle_S";
@@ -14,8 +15,19 @@ void RTSUnit::onInit() {
   }
 }
 
-void RTSUnit::onUpdate(const float& deltaTime) {
+void RTSUnit::onUpdate(const float& deltaTime, RTSTiledMap& tileMap) {
+  if (!m_bOnMap)
+  {
+    return;
+  }
   m_timeElapsed += deltaTime;
+  COORDS::getPixelToMapCoords(m_position.x, m_position.y, m_lasTile.x, m_lasTile.y);
+  if (m_currentTile!= m_lasTile)
+  {
+    tileMap.deleteObjectInTile(this, m_currentTile.x, m_currentTile.y);
+    m_currentTile = m_lasTile;
+    tileMap.insetObjectInTile(this, m_currentTile.x, m_currentTile.y);
+  }
   if (m_forces == Vector2(0, 0))
   {
     m_newDirection = { 0,0 };
@@ -35,22 +47,26 @@ void RTSUnit::onUpdate(const float& deltaTime) {
     m_direction.normalize();
     m_direction *= m_speed;
     m_directionView = m_direction.getSafeNormal();
-
   }
   else
   {
     m_direction = Vector2(0, 0);
   }
   UdpateAnimation();
+  m_position += m_direction;
   return;
 }
 
-void RTSUnit::draw(sf::RenderTarget* m_pTarget) {
-  m_position += m_direction;
+void RTSUnit::draw() {
+  if (!m_bOnMap)
+  {
+    return;
+  }
   RTSTexture& refTexture = *m_textures;
+  Vector2 screenPos;
+  COORDS::getPixelToScreenCoords(static_cast<int32>(m_position.x), static_cast<int32>(m_position.y), screenPos.x, screenPos.y);
 
-  refTexture.setPosition(m_position.x, m_position.y);
-  //m_mapGridCopy[(iterY*m_mapSize.x) + iterX].m_bDrawing = true;
+  refTexture.setPosition(screenPos.x, screenPos.y);
 
   if (m_timeElapsed > 0.1) {
     ++m_animationIdex;
@@ -66,6 +82,7 @@ void RTSUnit::draw(sf::RenderTarget* m_pTarget) {
     m_currentAnimation.frameData[m_animationIdex].y,
     m_currentAnimation.frameData[m_animationIdex].width,
     m_currentAnimation.frameData[m_animationIdex].high);
+  refTexture.setOrigin(m_currentAnimation.frameData[m_animationIdex].width/2, m_currentAnimation.frameData[m_animationIdex].high);
   refTexture.draw();
   if (m_currentAnimation.frameData[m_animationIdex].rotated)
   {
@@ -92,7 +109,7 @@ Vector2 RTSUnit::FollowPath(float impetu, int & indexPath, float Ratio)
   {
     v2 = m_pathToFollow[0] - m_pathToFollow[index];
     float distance = v1.size();
-    float compare = TILESIZE_X * .20;
+    float compare = GameOptions::s_TileSizeX * .20f;
     if (distance<= compare)
     {
       m_bHaveObjetive = false;
@@ -215,11 +232,11 @@ void RTSUnit::UdpateAnimation()
     }
     else if (m_directionView.x < 0 && m_directionView.y < 0.2)
     {
-      nameAnimation += "_SW";
+      nameAnimation += "_NW";
     }
     else
     {
-      nameAnimation += "_NW";
+      nameAnimation += "_SW";
     }
   }
   for (int i = 0; i < m_animations.size(); i++)

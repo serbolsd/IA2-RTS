@@ -1,23 +1,38 @@
 #include "RTSConfig.h"
 
-Vector2I GameOptions::s_Resolution = Vector2I(1366, 768);
-Vector2 GameOptions::s_MapMovementSpeed = Vector2(1024.0f, 1024.0f);
+
+
+Vector2I GameOptions::s_Resolution = Vector2I(0, 0);
+Vector2 GameOptions::s_MapMovementSpeed = Vector2(0, 0);
+Vector2I GameOptions::s_CameraPosition = Vector2I(0, 0);
+bool GameOptions::s_MapIsIsometric = false;
+
+int GameOptions::s_TileSizeX = 64;
+int GameOptions::s_TileSizeY = 64;
+
+int GameOptions::s_MapSizeX = 5;
+int GameOptions::s_MapSizeY = 5;
+
+bool GameOptions::s_bFullScreen = false;;
+String GameOptions::s_windowName ="";
+
 
 bool GameOptions::s_MapShowGrid = false;
-Color GameOptions::s_MapGridColor = Color(255, 0, 0, 255);
+Color GameOptions::s_MapGridColor = Color(0, 0, 0, 0);
 
-const Vector2I
-GameOptions::TILEHALFSIZE = Vector2I(TILESIZE_X >> 1, TILESIZE_Y >> 1);
+Vector2I
+GameOptions::TILEHALFSIZE = Vector2I(GameOptions::s_TileSizeX >> 1, GameOptions::s_TileSizeY >> 1);
 
-const Vector2I
+Vector2I
 GameOptions::BITSHFT_TILESIZE = Vector2I(
-  Math::countTrailingZeros(TILESIZE_X),
-  Math::countTrailingZeros(TILESIZE_Y)
+  Math::countTrailingZeros(GameOptions::s_TileSizeX),
+  Math::countTrailingZeros(GameOptions::s_TileSizeY)
 );
 
-const Vector2I
+Vector2I
 GameOptions::BITSFHT_TILEHALFSIZE = Vector2I(GameOptions::BITSHFT_TILESIZE.x - 1,
                                              GameOptions::BITSHFT_TILESIZE.y - 1);
+
 
 GameOptions&
 g_gameOptions() {

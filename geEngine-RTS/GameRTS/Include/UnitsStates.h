@@ -16,9 +16,9 @@ class unitState
 public:
   unitState() {};
   virtual ~unitState() {};
-  virtual void onEnter(RTSUnit& _unit) {};
-  virtual UNITSSTATES::E onUpdate(RTSUnit& _unit) { return UNITSSTATES::E::KNUMSTATES; };
-  virtual void onExit(RTSUnit& _unit) {};
+  virtual void onEnter(RTSUnit&) {};
+  virtual UNITSSTATES::E onUpdate(RTSUnit&) { return UNITSSTATES::E::KNUMSTATES; };
+  virtual void onExit(RTSUnit&) {};
 private:
 
 };

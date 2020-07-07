@@ -15,6 +15,9 @@
     <Filter Include="Source Files\UnitsStateMachine">
       <UniqueIdentifier>{be3938f6-503f-426e-9e73-e4667e221dc7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{db626e21-518d-4899-8e73-66bdd883ff7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Externals\imgui.cpp">
@@ -71,6 +74,12 @@
     <ClCompile Include="Source\unitAttackState.cpp">
       <Filter>Source Files\UnitsStateMachine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\RTSFunctionsCoords.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RTSTree.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\RTSUnitType.h">
@@ -126,6 +135,12 @@
     </ClInclude>
     <ClInclude Include="Include\StateMachine.h">
       <Filter>Source Files\UnitsStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSFunctionsCoords.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSTree.h">
+      <Filter>Source Files\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,9 +20,11 @@
 #include <imgui.h>
 #include <imgui-sfml.h>
 
+
 #include "RTSConfig.h"
 #include "RTSApplication.h"
 #include "RTSTiledMap.h"
+#include "RTSFunctionsCoords.h"
 
 void
 loadMapFromFile(RTSApplication* pApp);
@@ -53,7 +55,118 @@ static float g_TimeToPaintTail = 0.3f;
 static float g_euristicRelevande = 1.0f;
 static float g_costRelevande = 1.0f;
 
+int
+setResolution(lua_State* l) {
+  int32 width = (int32)lua_tointeger(l, 1);
+  int32 height = (int32)lua_tointeger(l, 2);
 
+  GameOptions::s_Resolution.x = width;
+  GameOptions::s_Resolution.y = height;
+
+  return 0;
+}
+
+int
+setWindowName(lua_State* l) {
+  GameOptions::s_windowName = (String)lua_tostring(l, 1);
+  return 0;
+}
+
+int
+setWindowStyle(lua_State* l) {
+  bool WindowStyle = (bool)lua_toboolean(l, 1);
+
+  GameOptions::s_bFullScreen = WindowStyle;
+  return 0;
+}
+
+int 
+setMapMovementSpeed(lua_State* l) {
+  float speedx = (float)lua_tonumber(l, 1);
+  float speedy = (float)lua_tonumber(l, 2);
+
+  GameOptions::s_MapMovementSpeed.x = speedx;
+  GameOptions::s_MapMovementSpeed.y = speedy;
+
+  return 0;
+}
+
+int
+setCameraPosition(lua_State* l) {
+  int32 posx = (int32)lua_tointeger(l, 1);
+  int32 posy = (int32)lua_tointeger(l, 2);
+
+  GameOptions::s_CameraPosition.x = posx;
+  GameOptions::s_CameraPosition.y = posy;
+
+  return 0;
+}
+
+int 
+setMapShowGrid(lua_State* l) {
+  bool showGrid = (bool)lua_toboolean(l, 1);
+
+  GameOptions::s_MapShowGrid = showGrid;
+
+  return 0;
+}
+
+int
+setMapGridColor(lua_State* l) {
+  int32 r = (int32)lua_tointeger(l, 1);
+  int32 g = (int32)lua_tointeger(l, 2);
+  int32 b = (int32)lua_tointeger(l, 3);
+  int32 a = (int32)lua_tointeger(l, 4);
+
+  GameOptions::s_MapGridColor.r = r;
+  GameOptions::s_MapGridColor.g = g;
+  GameOptions::s_MapGridColor.b = b;
+  GameOptions::s_MapGridColor.a = a;
+
+  return 0;
+}
+
+int 
+setMapSize(lua_State* l) {
+  int sizeX = (int)lua_tointeger(l, 1);
+  int sizeY = (int)lua_tointeger(l, 2);
+
+  GameOptions::s_MapSizeX = sizeX;
+  GameOptions::s_MapSizeY = sizeY;
+
+  return 0;
+}
+
+int
+setIfMapIsISO(lua_State* l) {
+  bool mapIsISO = (bool)lua_toboolean(l, 1);
+
+  GameOptions::s_MapIsIsometric = mapIsISO;
+
+  return 0;
+}
+
+int
+setTileSize(lua_State* l) {
+  int sizeX = (int)lua_tointeger(l, 1);
+  int sizeY = (int)lua_tointeger(l, 2);
+
+  GameOptions::s_TileSizeX = sizeX;
+  GameOptions::s_TileSizeY = sizeY;
+
+
+    GameOptions::TILEHALFSIZE = Vector2I((int32)GameOptions::s_TileSizeX >> 1, (int32)GameOptions::s_TileSizeY >> 1);
+
+    GameOptions::BITSHFT_TILESIZE = Vector2I(
+      Math::countTrailingZeros(GameOptions::s_TileSizeX),
+      Math::countTrailingZeros(GameOptions::s_TileSizeY)
+    );
+
+    GameOptions::BITSFHT_TILEHALFSIZE = Vector2I(GameOptions::BITSHFT_TILESIZE.x - 1,
+      GameOptions::BITSHFT_TILESIZE.y - 1);
+
+  return 0;
+}
 
 RTSApplication::RTSApplication()
   : m_window(nullptr),
@@ -66,10 +179,12 @@ RTSApplication::~RTSApplication() {}
 
 int32
 RTSApplication::run() {
+
   CrashHandler::startUp();
   DynLibManager::startUp();
   Time::startUp();
   GameOptions::startUp();
+
 
   __try {
     initSystems();
@@ -90,29 +205,41 @@ RTSApplication::run() {
 
 void RTSApplication::setZoomToView(const float& _zoom)
 {
-  if (_zoom==m_currentZoom)//check for zoom change
+  if (_zoom==m_currentZoom)
   {
     return;
   }
+  
   sf::Vector2f newViewSize = m_OriginalViewWindSize / _zoom;//The zoom is made from the original resolution
+  Vector2I camPos = { static_cast<int32>(newViewSize.x), static_cast<int32>(newViewSize.y - (175 / _zoom)) };
+  GameOptions::s_Resolution = { static_cast<int32>(newViewSize.x), static_cast<int32>(newViewSize.y - (175 / _zoom)) };
+  
   m_windoView.setSize(newViewSize);
-  m_windoView.setCenter(newViewSize.x/2, newViewSize.y/2);//set look at for the new resolution
+  m_windoView.setCenter(float(camPos.x/2), newViewSize.y/2);//set look at for the new resolution
   m_window->setView(m_windoView);
-  m_gameWorld.getTiledMap()->setEnd(newViewSize.x, newViewSize.y - (175/ _zoom));//set the new end resolution for redner tiles
+  m_gameWorld.getTiledMap()->setEnd(camPos.x, camPos.y);//set the new end resolution for redner tiles
+  //m_gameWorld.getTiledMap()->setCameraStartPosition(camPos.x, camPos.y);//set the new end resolution for redner tiles
   m_currentZoom = _zoom;
+
 }
 
 void
 RTSApplication::initSystems() {
+
+  if (!initLuaScriptSystem())
+  {
+    std::cout << "couldn´t initialize config with lua\n";
+  }
+
   if (nullptr != m_window) {  //Window already initialized
     return; //Shouldn't do anything
   }
 
   //Create the application window
   m_window = ge_new<sf::RenderWindow>(sf::VideoMode(GameOptions::s_Resolution.x,
-                                                    GameOptions::s_Resolution.y),
-                                      "RTS Game");
-                                      //sf::Style::Fullscreen);
+                                      GameOptions::s_Resolution.y),
+                                      GameOptions::s_windowName.c_str(),
+                                      GameOptions::s_bFullScreen ? sf::Style::Fullscreen : sf::Style::Default);
   if (nullptr == m_window) {
     GE_EXCEPT(InvalidStateException, "Couldn't create Application Window");
   }
@@ -134,6 +261,33 @@ RTSApplication::initSystems() {
   //m_window->setVerticalSyncEnabled(true);
 
   initGUI();
+}
+
+bool RTSApplication::initLuaScriptSystem()
+{
+  m_luaState = luaL_newstate();
+  if (nullptr == m_luaState)
+  {
+    return false;
+  }
+
+  luaL_openlibs(m_luaState);
+
+  lua_register(m_luaState, "setResolution", &setResolution);
+  lua_register(m_luaState, "setWindowsName", &setWindowName);
+  lua_register(m_luaState, "setWindowStyle", &setWindowStyle);
+  lua_register(m_luaState, "setMapMovementSpeed", &setMapMovementSpeed);
+  lua_register(m_luaState, "setCameraPosition", &setCameraPosition);
+  lua_register(m_luaState, "setMapShowGrid", &setMapShowGrid);
+  lua_register(m_luaState, "setMapGridColor", &setMapGridColor);
+  lua_register(m_luaState, "setMapSize", &setMapSize);
+  lua_register(m_luaState, "setIfMapIsISO", &setIfMapIsISO);
+  lua_register(m_luaState, "setTileSize", &setTileSize);
+
+  luaL_dofile(m_luaState, "config.lua");
+  luaL_dostring(m_luaState, "ConfigGame()");
+
+  return true;
 }
 
 void
@@ -245,38 +399,50 @@ RTSApplication::updateFrame() {
   if (0 == mousePosition.x ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-#ifdef MAP_IS_ISOMETRIC
-    axisMovement += Vector2(-1.f, 1.f);
-#else
-    axisMovement += Vector2(-1.f, 0.f);
-#endif
+    if (GameOptions::s_MapIsIsometric)
+    {
+      axisMovement += Vector2(-1.f, 1.f);
+    }
+    else
+    {
+      axisMovement += Vector2(-1.f, 0.f);
+    }
   }
   if (GameOptions::s_Resolution.x -1 == mousePosition.x ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-#ifdef MAP_IS_ISOMETRIC
-    axisMovement += Vector2(1.f, -1.f);
-#else
-    axisMovement += Vector2(1.f, 0.f);
-#endif
+    if (GameOptions::s_MapIsIsometric)
+    {
+      axisMovement += Vector2(1.f, -1.f);
+    }
+    else
+    {
+      axisMovement += Vector2(1.f, 0.f);
+    }
   }
   if (0 == mousePosition.y ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-#ifdef MAP_IS_ISOMETRIC
-    axisMovement += Vector2(-1.f, -1.f);
-#else
-    axisMovement += Vector2(0.f, -1.f);
-#endif
+    if (GameOptions::s_MapIsIsometric)
+    {
+      axisMovement += Vector2(-1.f, -1.f);
+    }
+    else
+    {
+      axisMovement += Vector2(0.f, -1.f);
+    }
   }
   if (GameOptions::s_Resolution.y - 1 == mousePosition.y ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
       sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-#ifdef MAP_IS_ISOMETRIC
-    axisMovement += Vector2(1.f, 1.f);
-#else
-    axisMovement += Vector2(0.f, 1.f);
-#endif
+    if (GameOptions::s_MapIsIsometric)
+    {
+      axisMovement += Vector2(1.f, 1.f);
+    }
+    else
+    {
+      axisMovement += Vector2(0.f, 1.f);
+    }
   }
 
   axisMovement *= GameOptions::s_MapMovementSpeed * deltaTime;
