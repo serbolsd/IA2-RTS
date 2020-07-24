@@ -1,6 +1,7 @@
 #include "RTSUnit.h"
 #include "RTSTiledMap.h"
 #include "RTSFunctionsCoords.h"
+
 void RTSUnit::onInit() {
   m_pState = m_pStateMachine->getIdleState();
   string nameAnimation="idle_S";
@@ -27,7 +28,10 @@ void RTSUnit::onUpdate(const float& deltaTime, RTSTiledMap& tileMap) {
     tileMap.deleteObjectInTile(this, m_currentTile.x, m_currentTile.y);
     m_currentTile = m_lasTile;
     tileMap.insetObjectInTile(this, m_currentTile.x, m_currentTile.y);
+    m_tileIndexX = m_currentTile.x;
+    m_tileIndexY = m_currentTile.y;
   }
+  tileMap.SetInfluenceInTile(m_currentTile.x, m_currentTile.y,m_influenceOfUnit);
   if (m_forces == Vector2(0, 0))
   {
     m_newDirection = { 0,0 };
@@ -45,7 +49,7 @@ void RTSUnit::onUpdate(const float& deltaTime, RTSTiledMap& tileMap) {
   {
     m_direction= m_newDirection;
     m_direction.normalize();
-    m_direction *= m_speed;
+    m_direction *= m_speed*deltaTime;
     m_directionView = m_direction.getSafeNormal();
   }
   else
@@ -226,17 +230,17 @@ void RTSUnit::UdpateAnimation()
     if (m_directionView.x > 0 && m_directionView.y > 0.2) {
       nameAnimation += "_SE";
     }
-    else if (m_directionView.x > 0 && m_directionView.y < 0.2)
+    else if (m_directionView.x > 0 && m_directionView.y < -0.2)
     {
       nameAnimation += "_NE";
     }
-    else if (m_directionView.x < 0 && m_directionView.y < 0.2)
+    else if (m_directionView.x < 0 && m_directionView.y > 0.2)
     {
-      nameAnimation += "_NW";
+      nameAnimation += "_SW";
     }
     else
     {
-      nameAnimation += "_SW";
+      nameAnimation += "_NW";
     }
   }
   for (int i = 0; i < m_animations.size(); i++)

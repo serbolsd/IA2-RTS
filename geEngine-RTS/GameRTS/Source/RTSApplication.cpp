@@ -36,10 +36,19 @@ float
 g_cameraZoom = 1.0f;
 
 static const char*
-g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle", "Tree" };
+g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle", "Tree", "Unit", "Select Unit" };
 static int 
 g_AddOption;
+static const char*
+g_UnitList[]{ "Walk","fly","Water"};
+static int
+g_unitOption=0;
+static UNITTYPE::E
+g_unitType= UNITTYPE::KTERRESTRIAL;
+static bool
+g_bRedTeam = false;
 static string g_AddOptionPreviw = g_AddList[0];
+static string g_UnitOptionPreviw = g_UnitList[0];
 static const char*
 g_PathList[]{ "Depth","Breadth","Best","Dijkstra","A*"};
 static int
@@ -350,6 +359,13 @@ RTSApplication::gameLoop() {
             break;
           case 6:
             m_gameWorld.getTiledMap()->addTree();
+            break;
+          case 7:
+            m_gameWorld.getTiledMap()->addUnit(g_unitType,g_bRedTeam);
+            break;
+          case 8:
+            m_gameWorld.getTiledMap()->selectUnit();
+            break;
           default:
             break;
           }
@@ -557,6 +573,9 @@ mainMenu(RTSApplication* pApp) {
 
     ImGui::Checkbox("Show grid", &GameOptions::s_MapShowGrid);
    
+
+    ImGui::Checkbox("Show Zones", &pApp->getWorld()->getTiledMap()->m_bShowZones);
+
     ImGui::SliderFloat("Zoom",
       &g_cameraZoom,
       0.3f,
@@ -571,6 +590,31 @@ mainMenu(RTSApplication* pApp) {
       g_AddOptionPreviw = g_AddList[g_AddOption];
       ImGui::EndCombo();
     }
+    if (7 == g_AddOption)
+    {
+      if (ImGui::BeginCombo("Unit Type", g_UnitOptionPreviw.c_str()))
+      {
+        g_UnitOptionPreviw = "";
+        ImGui::ListBox("ADD", &g_unitOption, g_UnitList, IM_ARRAYSIZE(g_UnitList));
+        g_UnitOptionPreviw = g_UnitList[g_unitOption];
+        ImGui::EndCombo();
+      }
+      switch (g_unitOption)
+      {
+      case 0:
+        g_unitType = UNITTYPE::KTERRESTRIAL;
+        break;
+      case 1:
+        g_unitType = UNITTYPE::KFLYING;
+        break;
+      case 2:
+        g_unitType = UNITTYPE::KMARINE;
+        break;
+      default:
+        break;
+      }
+      ImGui::Checkbox("Unit's in Red Team", &g_bRedTeam);
+    }
 
     if (ImGui::BeginCombo("Path Finding type", g_PathFindingOptionPreviw.c_str()))
     {
@@ -581,6 +625,7 @@ mainMenu(RTSApplication* pApp) {
       ImGui::EndCombo();
     }
 
+    ImGui::InputInt("Steps",&pApp->getWorld()->getTiledMap()->m_stepToDo,0,600);
     
     if (ImGui::BeginCombo("Euristic", g_EuristicOptionPreviw.c_str()))
     {
@@ -604,6 +649,19 @@ mainMenu(RTSApplication* pApp) {
 
     ImGui::SliderFloat("Cost Relevance", &g_costRelevande, 0.1f, 2.0f);
     pApp->getWorld()->getTiledMap()->setCostRelevance(g_costRelevande);
+
+    ImGui::Checkbox("Show influence", &pApp->getWorld()->getTiledMap()->m_bShowInfluenceMap);
+    ImGui::Checkbox("Red Influence", &pApp->getWorld()->getTiledMap()->m_bRedTeam);
+
+    ImGui::SliderFloat("momemtum",
+      &pApp->getWorld()->getTiledMap()->m_momentum,
+      0.001f,
+      1.2f);
+
+    ImGui::SliderFloat("decay",
+      &pApp->getWorld()->getTiledMap()->m_decay,
+      0.01,
+      1.0f);
   }
   ImGui::End();
 }

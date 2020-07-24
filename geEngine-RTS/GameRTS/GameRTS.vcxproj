@@ -97,6 +97,7 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>NDEBUG;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib/$(PlatformShortName)/;$(DEVLIBS)SFML/lib/$(PlatformTarget)/;$(DEVLIBS)SFML/lib;D:\DevLib\lua-lua-5.2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -115,6 +116,7 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>NDEBUG;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib/$(PlatformShortName)/;$(DEVLIBS)SFML/lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -168,6 +170,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Include\RTSPathFinder.cpp" />
     <ClCompile Include="Source\Externals\imgui-SFML.cpp" />
     <ClCompile Include="Source\Externals\imgui.cpp" />
     <ClCompile Include="Source\Externals\imgui_demo.cpp" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Include\RTSConfig.h" />
     <ClInclude Include="Include\RTSFunctionsCoords.h" />
     <ClInclude Include="Include\RTSObjects.h" />
+    <ClInclude Include="Include\RTSPathFinder.h" />
     <ClInclude Include="Include\RTSTexture.h" />
     <ClInclude Include="Include\RTSTextureObject.h" />
     <ClInclude Include="Include\RTSTiledMap.h" />

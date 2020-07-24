@@ -80,6 +80,9 @@
     <ClCompile Include="Source\RTSTree.cpp">
       <Filter>Source Files\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Include\RTSPathFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\RTSUnitType.h">
@@ -141,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="Include\RTSTree.h">
       <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RTSPathFinder.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
