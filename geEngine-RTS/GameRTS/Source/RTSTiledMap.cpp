@@ -408,7 +408,7 @@ void RTSTiledMap::setTileType(const int & i)
     {
     case 0://Water
       m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setType(0);
-      m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setCost(3);
+      m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setCost(1);
       break;
     case 1://Grass
       m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setType(1);
@@ -416,7 +416,7 @@ void RTSTiledMap::setTileType(const int & i)
       break;
     case 2://Pantano
       m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setType(2);
-      m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setCost(5);
+      m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setCost(3);
       break;
     case 3://Obstacle
       m_mapGrid[m_tileSelectedIndexY*m_mapSize.x + m_tileSelectedIndexX].setType(3);
@@ -577,8 +577,8 @@ void RTSTiledMap::selectUnit()
   {
     //m_tileStart = &m_mapGridCopy[m_tileSelectedIndex];
     //m_tileStart->setcolor(m_tileStartColor);
-    //m_tileStartIndexX = m_tileSelectedIndexX;
-    //m_tileStartIndexY = m_tileSelectedIndexY;
+    m_tileStartIndexX = m_tileSelectedIndexX;
+    m_tileStartIndexY = m_tileSelectedIndexY;
     for (int i = 0; i < m_mapGrid[m_tileSelectedIndex].m_myObject.size(); i++)
     {
       if (TYPEOBJECT::UNIT == m_mapGrid[m_tileSelectedIndex].m_myObject[i]->getType())
@@ -1152,7 +1152,8 @@ RTSTiledMap::BestFirstSearchWithSteps(uint32 steps, UNITTYPE::E typeUnit) {
   }
 }
 
-void RTSTiledMap::DijkstraSearch()
+void 
+RTSTiledMap::DijkstraSearch()
 {
   m_pathStack.push_front(actual);
   int actualIndX = actual->getIndexGridX();
@@ -1211,8 +1212,8 @@ void RTSTiledMap::DijkstraSearch()
   m_dijkstra.erase(m_dijkstra.begin());
 }
 
-void RTSTiledMap::DijkstraSearchWithSteps(uint32 steps, UNITTYPE::E typeUnit)
-{
+void 
+RTSTiledMap::DijkstraSearchWithSteps(uint32 steps, UNITTYPE::E typeUnit) {
   m_pathStack.push_front(actual);
   int actualIndX = actual->getIndexGridX();
   int actualIndY = actual->getIndexGridY();
@@ -1780,10 +1781,6 @@ void RTSTiledMap::returnBresenhamLinePath()
   m_BresenhamPathLine[0]->setParent(nullptr);
   for (int i = size; i > lasTile; --i)
   {
-    if (i==lasTile)
-    {
-      break;
-    }
     if (checkForBresenhamLinePath(i, lasTile)) {
       COORDS::getTileCenterOnPixelCoords(m_BresenhammapPathRegisterTail[i]->getIndexGridX(),
         m_BresenhammapPathRegisterTail[i]->getIndexGridY(),
@@ -1802,10 +1799,10 @@ void RTSTiledMap::returnBresenhamLinePath()
         break;
       }
       lasTile = i;
-      i = size;
+      i = size + 1;
     }
   }
-  if (nullptr!= m_selectedUnit && m_bBresenhamLine)
+  if (nullptr != m_selectedUnit && m_bBresenhamLine)
   {
     //m_archerUnit.m_pathToFollow.clear();
     m_selectedUnit->m_pathToFollow.clear();
@@ -1849,17 +1846,17 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
   y1 = tmpTileB->getIndexGridY();
   int p = 2 * dy - dx;
   m = linea.size();
-  if (dx > dy)
+  if (abs(dx) > abs(dy))
   {
     if (x < x1)
     {
       if (y < y1)
       {
-        p = 2 * dy - dx;
+        p = 2 * dy - abs(dx);
       }
       else
       {
-        p = 2 * (-dy) - dx;
+        p = 2 * (-dy) - abs(dx);
       }
       while (x < x1 || y != y1)
       {
@@ -1872,7 +1869,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               y > m_mapSize.y;
             }
-            p = p + 2 * (dy)-2 * dx;
+            p = p + 2 * (dy)-2 * abs(dx);
           }
           else
           {
@@ -1881,7 +1878,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               y = 0;
             }
-            p = p + 2 * (-dy) - 2 * dx;
+            p = p + 2 * (-dy) - 2 * abs(dx);
           }
         }
         else
@@ -1914,15 +1911,15 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
     {
       if (y < y1)
       {
-        p = 2 * dy - dx;
+        p = 2 * dy - abs(dx);
       }
       else
       {
-        p = 2 * (-dy) - dx;
+        p = 2 * (-dy) - abs(dx);
       }
       while (x > x1 || y != y1)
       {
-        if (p >= 0)
+        if (p > 0)
         {
           if (y < y1)
           {
@@ -1931,7 +1928,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               y > m_mapSize.y;
             }
-            p = p + 2 * (dy)+2 * dx;
+            p = p + 2 * (dy)+2 * abs(dx);
           }
           else
           {
@@ -1940,7 +1937,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               y = 0;
             }
-            p = p + 2 * (-dy) - 2 * dx;
+            p = p + 2 * (-dy) - 2 * abs(dx);
           }
         }
         else
@@ -1976,11 +1973,11 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
     {
       if (x < x1)
       {
-        p = 2 * dx - dy;
+        p = 2 * dx - abs(dy);
       }
       else
       {
-        p = 2 * (-dx) - dy;
+        p = 2 * (-dx) - abs(dy);
       }
       while (y < y1 || x != x1)
       {
@@ -1993,7 +1990,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               x > m_mapSize.x;
             }
-            p = p + 2 * (dx)-2 * dy;
+            p = p + 2 * (dx)-2 * abs(dy);
           }
           else
           {
@@ -2002,7 +1999,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               x = 0;
             }
-            p = p + 2 * (-dx) - 2 * dy;
+            p = p + 2 * (-dx) - 2 * abs(dy);
           }
         }
         else
@@ -2035,15 +2032,15 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
     {
       if (x < x1)
       {
-        p = 2 * dx - dy;
+        p = 2 * dx - abs(dy);
       }
       else
       {
-        p = 2 * (-dx) - dy;
+        p = 2 * (-dx) - abs(dy);
       }
       while (y > y1 || x != x1)
       {
-        if (p >= 0)
+        if (p > 0)
         {
           if (x < x1)
           {
@@ -2052,7 +2049,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               x > m_mapSize.x;
             }
-            p = p + 2 * (dx)+2 * dy;
+            p = p + 2 * (dx)+2 * abs(dy);
           }
           else
           {
@@ -2061,7 +2058,7 @@ bool RTSTiledMap::checkForBresenhamLinePath(int IndexTileInit,int indexTileFinis
             {
               x = 0;
             }
-            p = p + 2 * (-dx) - 2 * dy;
+            p = p + 2 * (-dx) - 2 * abs(dy);
           }
         }
         else
@@ -2168,14 +2165,14 @@ RTSTiledMap::update(float deltaTime) {
       {
       case DEPTH:
         //DepthFirstSearch();
-        if (nullptr == m_selectedUnit)
-        {
-          DepthFirstSearchWithSteps(m_stepToDo, UNITTYPE::KFLYING);
-        }
-        else
-        {
-          DepthFirstSearchWithSteps(m_stepToDo, m_selectedUnit->m_unitType);
-        }
+        //if (nullptr == m_selectedUnit)
+        //{
+        //  DepthFirstSearchWithSteps(m_stepToDo, UNITTYPE::KFLYING);
+        //}
+        //else
+        //{
+        //  DepthFirstSearchWithSteps(m_stepToDo, m_selectedUnit->m_unitType);
+        //}
         break;
       case BREADTH:
         //BreadthFirstSearch();
@@ -2189,6 +2186,7 @@ RTSTiledMap::update(float deltaTime) {
         }
         break;
       case BEST:
+        //DijkstraSearch();
         //BestFirstSearch();
         if (nullptr == m_selectedUnit)
         {
