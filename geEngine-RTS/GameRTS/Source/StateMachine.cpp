@@ -11,9 +11,18 @@ StateMachine::~StateMachine()
 
 void StateMachine::init()
 {
-  m_pIdleState = new unitIdleState();
-  m_pRunState = new unitRunState();
-  m_pAttackState = new unitAttackState();;
+  if (nullptr == m_pIdleState)
+  {
+    m_pIdleState = new unitIdleState();
+  }
+  if (nullptr == m_pRunState)
+  {
+    m_pRunState = new unitRunState();
+  }
+  if (nullptr == m_pAttackState)
+  {
+    m_pAttackState = new unitAttackState();
+  }
 }
 
 void StateMachine::updateState(RTSUnit& _unit)
@@ -53,14 +62,17 @@ void StateMachine::onDelete()
   if (m_pIdleState != nullptr)
   {
     delete m_pIdleState;
+    m_pIdleState = nullptr;
   }
   if (m_pRunState != nullptr)
   {
     delete m_pRunState;
+    m_pRunState = nullptr;
   }
   if (m_pAttackState != nullptr)
   {
     delete m_pAttackState;
+    m_pAttackState = nullptr;
   }
 
 }

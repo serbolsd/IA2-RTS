@@ -57,7 +57,9 @@ class Object {
   setIDofData(int id) {
     m_ID = id;
   }
-  int m_ID;
+  unsigned int m_ID = 0;
+  unsigned int m_TypeID = 0;
+  unsigned int m_playerID = 0;
   void* m_myTile;
   Vector2 m_position;
   TYPEOBJECT m_ytpe=UNKNOWOBJECTTYPE;

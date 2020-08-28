@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;D:\DevLib\lua-lua-5.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEVLIBS)sol2/include/;./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;D:\DevLib\lua-lua-5.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -112,7 +112,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEVLIBS)sol2/include/;./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -133,7 +133,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEVLIBS)sol2/include/;./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -155,7 +155,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;D:\DevLib\lua-lua-5.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DEVLIBS)sol2/include/;./Include;./Include/Externals/;$(SolutionDir)geUtility/Include/;$(DEVLIBS)SFML/include/;D:\DevLib\lua-lua-5.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -177,6 +177,7 @@
     <ClCompile Include="Source\Externals\imgui_draw.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\RTSApplication.cpp" />
+    <ClCompile Include="Source\RTSBuildCreateUnits.cpp" />
     <ClCompile Include="Source\RTSConfig.cpp" />
     <ClCompile Include="Source\RTSFunctionsCoords.cpp" />
     <ClCompile Include="Source\RTSObjects.cpp" />
@@ -201,10 +202,12 @@
     <ClInclude Include="Include\Externals\stb_textedit.h" />
     <ClInclude Include="Include\Externals\stb_truetype.h" />
     <ClInclude Include="Include\RTSApplication.h" />
+    <ClInclude Include="Include\RTSBuildCreateUnits.h" />
     <ClInclude Include="Include\RTSConfig.h" />
     <ClInclude Include="Include\RTSFunctionsCoords.h" />
     <ClInclude Include="Include\RTSObjects.h" />
     <ClInclude Include="Include\RTSPathFinder.h" />
+    <ClInclude Include="Include\RTSPlayer.h" />
     <ClInclude Include="Include\RTSTexture.h" />
     <ClInclude Include="Include\RTSTextureObject.h" />
     <ClInclude Include="Include\RTSTiledMap.h" />

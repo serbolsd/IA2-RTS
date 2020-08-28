@@ -10,6 +10,7 @@
 #include "RTSTextureObject.h"
 #include "RTSObjects.h"
 #include "RTSUnit.h"
+#include "RTSBuildCreateUnits.h"
 #include "StateMachine.h"
 #include "RTSFunctionsCoords.h"
 
@@ -252,7 +253,14 @@ public:
   getMapSize() const {
     return m_mapSize;
   }
-
+  MapTile&
+  getTile(int index) {
+    if (index > 0 || index < m_mapSize.x * m_mapSize.y)
+    {
+      return m_mapGrid[index];
+    }
+  }
+  
   bool
   loadFromImageFile(sf::RenderTarget* pTarget, String fileName);
 
@@ -363,6 +371,12 @@ public:
   void
   addUnit(UNITTYPE::E _tipe, bool teamRed = false);
 
+  RTSUnit*
+  getUnitInTile(int indexX, int indexY);
+
+  BuildCreateUnits*
+  getBuildInTile(int indexX, int indexY);
+
   void
   selectUnit();
 
@@ -394,6 +408,9 @@ public:
   void
   insetObjectInTile(Object* _object, int32 tilex, int32 tiley);
 
+  void
+  initZones();
+
   float m_momentum = 0.70f;
   float m_momentumPerSecond = 0.70f;
   float m_decay = 0.15f;
@@ -402,6 +419,14 @@ public:
   bool m_bShowZones = false;
   bool m_bRedTeam = false;
   int32 m_stepToDo = 200;
+
+  int m_tileSelectedIndex = -1;
+  int m_tileSelectedIndexX = -1;
+  int m_tileSelectedIndexY = -1;
+  
+  bool 
+  checkCanAddUnitToTile(UNITTYPE::E typeUnit, int indexTile);
+
 private:
 
   void
@@ -444,6 +469,9 @@ private:
   DijkstraSearchForZones(uint32 steps);
 
   void
+  DijkstraSearchForZonesPerFrame(uint32 steps);
+
+  void
   checkLimitOfzones();
 
   void
@@ -475,7 +503,6 @@ private:
 
   void
   updateTileColor();
-
 private:
   Vector2I m_mapSize;
   Vector<MapTile> m_mapGrid;
@@ -500,9 +527,7 @@ private:
   sf::CircleShape m_mouseInWindow;
 
   MapTile* m_tileSelected = nullptr;
-  int m_tileSelectedIndex = -1;
-  int m_tileSelectedIndexX = -1;
-  int m_tileSelectedIndexY = -1;
+
   MapTile* m_tileStart = nullptr;
   int m_tileStartIndexX = -1;
   int m_tileStartIndexY = -1;
@@ -568,6 +593,15 @@ private:
   StateMachine m_stateMachine;
   uint32 m_dijkstraStepsDone=0;
   uint32 m_StepsDone=0;
-  uint32 m_StepsToZone=2000;
+  uint32 m_StepsToZone= 5000;
   bool m_bAllMapWithZones= false;
+  bool m_loadingMap = false;
+
+  MapZone m_tmpzone;
+  int m_tmpr;
+  int m_tmpg;
+  int m_tmpb;
+  int m_tmpa = 255;
+  bool m_tmpChekingZones = false;
+  TERRAIN_TYPE::E m_tmpCurrentType;
 };

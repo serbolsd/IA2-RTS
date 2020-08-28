@@ -3,6 +3,7 @@
 #include "RTSTextureObject.h"
 #include "UnitsStates.h"
 #include "StateMachine.h"
+#include <sol/sol.hpp>
 
 
 namespace UNITTYPE {
@@ -14,6 +15,7 @@ namespace UNITTYPE {
     KNUMUNITTYPES
   };
 }
+
 
 class RTSTiledMap;
 
@@ -69,7 +71,7 @@ class RTSTiledMap;
     Vector2 flee(Vector2 PosB, float impetu);
     Vector2 arrive(Vector2 PosB, float impetu, float ratio);
     int m_idexPath = 0;
-    Vector2 m_forces;
+    Vector2 m_forces = {0,0};
 
 
     RTSGame::ANIMATIONS::E m_animation = RTSGame::ANIMATIONS::kIDLE;
@@ -80,6 +82,8 @@ class RTSTiledMap;
     Vector2I m_lasTile;
 
     UNITTYPE::E m_unitType = UNITTYPE::KNUMUNITTYPES;
+
+    sol::state m_luaScripUnits;
   private:
     void
       UdpateAnimation();

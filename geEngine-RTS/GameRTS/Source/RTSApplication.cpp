@@ -36,13 +36,15 @@ float
 g_cameraZoom = 1.0f;
 
 static const char*
-g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle", "Tree", "Unit", "Select Unit" };
+g_AddList[]{ "Start","End","Water","Grass","Marsh","Obstacle", "Tree", "Unit", "Select Unit","Build","Select Build" };
 static int 
 g_AddOption;
 static const char*
 g_UnitList[]{ "Walk","fly","Water"};
 static int
 g_unitOption=0;
+static int
+g_unitOptionToCreate = 0;
 static UNITTYPE::E
 g_unitType= UNITTYPE::KTERRESTRIAL;
 static bool
@@ -127,10 +129,10 @@ setMapGridColor(lua_State* l) {
   int32 b = (int32)lua_tointeger(l, 3);
   int32 a = (int32)lua_tointeger(l, 4);
 
-  GameOptions::s_MapGridColor.r = r;
-  GameOptions::s_MapGridColor.g = g;
-  GameOptions::s_MapGridColor.b = b;
-  GameOptions::s_MapGridColor.a = a;
+  GameOptions::s_MapGridColor.r = (uint8)r;
+  GameOptions::s_MapGridColor.g = (uint8)g;
+  GameOptions::s_MapGridColor.b = (uint8)b;
+  GameOptions::s_MapGridColor.a = (uint8)a;
 
   return 0;
 }
@@ -293,7 +295,7 @@ bool RTSApplication::initLuaScriptSystem()
   lua_register(m_luaState, "setIfMapIsISO", &setIfMapIsISO);
   lua_register(m_luaState, "setTileSize", &setTileSize);
 
-  luaL_dofile(m_luaState, "config.lua");
+  luaL_dofile(m_luaState, "lua/config.lua");
   luaL_dostring(m_luaState, "ConfigGame()");
 
   return true;
@@ -361,10 +363,39 @@ RTSApplication::gameLoop() {
             m_gameWorld.getTiledMap()->addTree();
             break;
           case 7:
-            m_gameWorld.getTiledMap()->addUnit(g_unitType,g_bRedTeam);
+            //m_gameWorld.getTiledMap()->addUnit(g_unitType,g_bRedTeam);
+            m_gameWorld.addUnit(g_unitType);
             break;
           case 8:
-            m_gameWorld.getTiledMap()->selectUnit();
+            //m_gameWorld.getTiledMap()->selectUnit();
+            if (m_gameWorld.m_bRedTeam)
+            {
+              m_gameWorld.selectUnit(2);
+            }
+            else
+            {
+              m_gameWorld.selectUnit(1);
+            }
+            break;
+          case 9:
+            if (m_gameWorld.m_bRedTeam)
+            {
+              m_gameWorld.addBuild(2);
+            }
+            else
+            {
+              m_gameWorld.addBuild(1);
+            }
+            break;
+          case 10:
+            if (m_gameWorld.m_bRedTeam)
+            {
+              m_gameWorld.selectBuild(2);
+            }
+            else
+            {
+              m_gameWorld.selectBuild(1);
+            }
             break;
           default:
             break;
@@ -560,6 +591,11 @@ mainMenu(RTSApplication* pApp) {
 
   ImGui::Begin("Game Options");
   {
+    //if (ImGui::Button("Make zones"))
+    //{
+    //  pApp->getWorld()->getTiledMap()->initZones();
+    //}
+
     ImGui::Text("Framerate: %f", pApp->getFPS());
 
     ImGui::SliderFloat("Map movement speed X",
@@ -578,7 +614,7 @@ mainMenu(RTSApplication* pApp) {
 
     ImGui::SliderFloat("Zoom",
       &g_cameraZoom,
-      0.3f,
+      0.01f,
       2.0f);
     pApp->setZoomToView(g_cameraZoom);
 
@@ -613,13 +649,13 @@ mainMenu(RTSApplication* pApp) {
       default:
         break;
       }
-      ImGui::Checkbox("Unit's in Red Team", &g_bRedTeam);
     }
+    ImGui::Checkbox("Red Team", &pApp->getWorld()->m_bRedTeam);
 
     if (ImGui::BeginCombo("Path Finding type", g_PathFindingOptionPreviw.c_str()))
     {
       g_PathFindingOptionPreviw = "";
-      ImGui::ListBox("Parh Finding", &g_PathOption, g_PathList, IM_ARRAYSIZE(g_PathList));
+      ImGui::ListBox("Path Finding", &g_PathOption, g_PathList, IM_ARRAYSIZE(g_PathList));
       g_PathFindingOptionPreviw = g_PathList[g_PathOption];
       pApp->getWorld()->getTiledMap()->setPathFinding(g_PathOption);
       ImGui::EndCombo();
@@ -660,8 +696,32 @@ mainMenu(RTSApplication* pApp) {
 
     ImGui::SliderFloat("decay",
       &pApp->getWorld()->getTiledMap()->m_decay,
-      0.01,
+      0.01f,
       1.0f);
   }
   ImGui::End();
+  if (pApp->getWorld()->m_pBuildSelected != nullptr)
+  {
+    ImGui::Begin("Build Options");
+    {
+      if (ImGui::BeginCombo("Unit Type", g_UnitOptionPreviw.c_str()))
+      {
+        g_UnitOptionPreviw = "";
+        ImGui::ListBox("Type", &g_unitOptionToCreate, g_UnitList, IM_ARRAYSIZE(g_UnitList));
+        g_UnitOptionPreviw = g_UnitList[g_unitOptionToCreate];
+        ImGui::EndCombo();
+      }
+      if (ImGui::Button("Create Unit"))
+      {
+        pApp->getWorld()->m_pBuildSelected->generateUnit(g_unitOptionToCreate);
+      }
+      if (pApp->getWorld()->m_pBuildSelected->m_bCreating)
+      {
+        float elapse = pApp->getWorld()->m_pBuildSelected->m_elapseTime;
+        ImGui::SliderFloat("time", &elapse, 0.0f, pApp->getWorld()->m_pBuildSelected->m_timeToCreate);
+      }
+    }
+    ImGui::End();
+  }
+  
 }

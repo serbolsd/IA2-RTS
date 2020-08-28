@@ -29,8 +29,8 @@ TextureObject::onInit(sf::RenderTarget* pTarget) {
   std::ifstream units("feudalWarUnits.json");
   units >> m_unitsJson;
   frames = m_unitsJson["frames"];
-  RTSGame::UNITTYPE::E unitType = RTSGame::UNITTYPE::KNUMUNITTYPES;
-  RTSGame::DIRECTIONS::E dir = RTSGame::DIRECTIONS::kNUM_DIRECTIONS;
+//  RTSGame::UNITTYPE::E unitType = RTSGame::UNITTYPE::KNUMUNITTYPES;
+  //RTSGame::DIRECTIONS::E dir = RTSGame::DIRECTIONS::kNUM_DIRECTIONS;
 
   for (nlohmann::json::iterator it = m_unitsJson["frames"].begin(); it != m_unitsJson["frames"].end(); ++it) {
     TextureData tempTexDara;

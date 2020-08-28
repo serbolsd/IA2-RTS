@@ -32,32 +32,43 @@ void RTSUnit::onUpdate(const float& deltaTime, RTSTiledMap& tileMap) {
     m_tileIndexY = m_currentTile.y;
   }
   tileMap.SetInfluenceInTile(m_currentTile.x, m_currentTile.y,m_influenceOfUnit);
-  if (m_forces == Vector2(0, 0))
-  {
-    m_newDirection = { 0,0 };
-  }
-  else
-  {
-    m_newDirection = m_forces;
-  }
+  //if (m_forces == Vector2(0, 0))
+  //{
+  //  m_newDirection = { 0,0 };
+  //}
+  //else
+  //{
+  //  m_newDirection = m_forces;
+  //}
   //Vector2 pointToSeek = m_newDirection + m_position;
   m_pastState = m_currentState;
   m_currentState = m_pState->onUpdate(*this);
   m_pStateMachine->updateState(*this);
+  m_luaScripUnits["setForce"](m_forces);
+  m_luaScripUnits["setSpeed"](m_speed);
+  m_luaScripUnits["setPos"](m_position);
+  m_luaScripUnits["setDeltaTime"](deltaTime);
+  m_luaScripUnits["Update"]();
 
-  if (m_newDirection != Vector2(0, 0))
+  m_direction = m_luaScripUnits["getDirection"]();
+  m_position = m_luaScripUnits["getPos"]();
+  //if (m_newDirection != Vector2(0, 0))
+  //{
+  //  m_direction= m_newDirection;
+  //  m_direction.normalize();
+  //  m_direction *= m_speed * deltaTime;
+  //  m_directionView = m_direction.getSafeNormal();
+  //}
+  //else
+  //{
+  //  m_direction = Vector2(0, 0);
+  //}
+  if (m_direction != Vector2(0, 0))
   {
-    m_direction= m_newDirection;
-    m_direction.normalize();
-    m_direction *= m_speed*deltaTime;
     m_directionView = m_direction.getSafeNormal();
   }
-  else
-  {
-    m_direction = Vector2(0, 0);
-  }
   UdpateAnimation();
-  m_position += m_direction;
+  //m_position += m_direction;
   return;
 }
 

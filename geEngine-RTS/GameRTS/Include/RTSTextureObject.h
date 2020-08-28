@@ -29,7 +29,7 @@ class TextureObject
   onInit(sf::RenderTarget* pTarget);
 
   void 
-  onExit();
+  onExit() {};
   
 
   

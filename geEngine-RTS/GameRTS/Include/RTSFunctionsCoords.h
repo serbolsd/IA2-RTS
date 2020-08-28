@@ -108,8 +108,8 @@ namespace COORDS {
       //tileCoord.x += 1;
       //pixCoord.x = (tileCoord.x - tileCoord.y) << GameOptions::BITSFHT_TILEHALFSIZE.x;
       //pixCoord.y = (tileCoord.x + tileCoord.y) << GameOptions::BITSFHT_TILEHALFSIZE.y;
-      pixCoord.x = pixX ;
-      pixCoord.y = pixY ;
+      pixCoord.x = (float)pixX ;
+      pixCoord.y = (float)pixY ;
 
       scrX = pixCoord.x + PreCalc_ScreenDeface.x;
       scrY = pixCoord.y + PreCalc_ScreenDeface.y;

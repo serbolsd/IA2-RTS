@@ -1,6 +1,7 @@
 #include "RTSTiledMap.h"
 #include "RTSTexture.h"
 #include "RTSFunctionsCoords.h"
+#include "RTSBuildCreateUnits.h"
 #include "RTSTree.h"
 #include <geDebug.h>
 #include <geColor.h>
@@ -8,7 +9,7 @@
 
 float lerp(float a, float b, float f)
 {
-  return (a * (1.0 - f)) + (b * f);
+  return (a * (1.0f - f)) + (b * f);
 }
 
 RTSTiledMap::RTSTiledMap() {
@@ -107,6 +108,10 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
  
   preCalc();
   m_stateMachine.init();
+  if (m_loadingMap)
+  {
+    return true;
+  }
   DijkstraSearchForZones(m_StepsToZone);
   for (int i = 0; i < m_mapZones.size(); i++)
   {
@@ -118,6 +123,9 @@ RTSTiledMap::init(sf::RenderTarget* pTarget, const Vector2I& mapSize) {
   }
   checkLimitOfzones();
   actual = nullptr;
+  //m_tmpr = rand() % 100 + 100;
+  //m_tmpg = rand() % 100 + 100;
+  //m_tmpb = rand() % 100 + 100;
   return true;
 }
 
@@ -571,12 +579,48 @@ void RTSTiledMap::addUnit(UNITTYPE::E _tipe, bool teamRed)
   }
 }
 
+RTSUnit * RTSTiledMap::getUnitInTile(int indexX, int indexY)
+{
+  if ((indexX < 0 && indexX > m_mapSize.x) || (indexY < 0 && indexY > m_mapSize.y))
+  {
+    return nullptr;
+  }
+  auto tile = &m_mapGrid[indexY*m_mapSize.x + indexX];
+  for (int i = 0; i < tile->m_myObject.size(); i++)
+  {
+    Object *tmpObject = tile->m_myObject[i];
+    if (TYPEOBJECT::UNIT == tmpObject->getType())
+    {
+      RTSUnit* tmpUnit = static_cast<RTSUnit*>(tmpObject);
+      return tmpUnit;
+    }
+  }
+  return nullptr;
+}
+
+BuildCreateUnits * RTSTiledMap::getBuildInTile(int indexX, int indexY)
+{
+  if ((indexX < 0 && indexX > m_mapSize.x) || (indexY < 0 && indexY > m_mapSize.y))
+  {
+    return nullptr;
+  }
+  auto tile = &m_mapGrid[indexY*m_mapSize.x + indexX];
+  for (int i = 0; i < tile->m_myObject.size(); i++)
+  {
+    Object *tmpObject = tile->m_myObject[i];
+    if (TYPEOBJECT::BUILD == tmpObject->getType())
+    {
+      BuildCreateUnits* tmpBuild = static_cast<BuildCreateUnits*>(tmpObject);
+      return tmpBuild;
+    }
+  }
+  return nullptr;
+}
+
 void RTSTiledMap::selectUnit()
 {
   if (m_tileSelectedIndex >= 0)
   {
-    //m_tileStart = &m_mapGridCopy[m_tileSelectedIndex];
-    //m_tileStart->setcolor(m_tileStartColor);
     m_tileStartIndexX = m_tileSelectedIndexX;
     m_tileStartIndexY = m_tileSelectedIndexY;
     for (int i = 0; i < m_mapGrid[m_tileSelectedIndex].m_myObject.size(); i++)
@@ -586,13 +630,45 @@ void RTSTiledMap::selectUnit()
         m_selectedUnit = reinterpret_cast<RTSUnit*>(m_mapGrid[m_tileSelectedIndex].m_myObject[i]);
       }
     }
-    //Vector2I pixelPos;
-    //COORDS::getTileCenterOnPixelCoords(m_tileSelectedIndexX, m_tileSelectedIndexY, pixelPos.x, pixelPos.y);
-    //m_archerUnit.m_position = { float(pixelPos.x), float(pixelPos.y) };
-    //m_archerUnit.m_lasTile = { m_tileSelectedIndexX ,m_tileSelectedIndexY };
-    //m_archerUnit.m_bOnMap = true;
-    //m_tileStart->addObject(&m_archerUnit);
   }
+}
+
+bool RTSTiledMap::checkCanAddUnitToTile(UNITTYPE::E typeUnit, int indexTile)
+{
+  switch (typeUnit)
+  {
+  case UNITTYPE::KTERRESTRIAL:
+    if (TERRAIN_TYPE::E::kGrass == m_mapGrid[indexTile].getType() || 
+        TERRAIN_TYPE::E::kMarsh == m_mapGrid[indexTile].getType())
+    {
+      if (m_mapGrid[indexTile].m_haveObtacle)
+      {
+        return false;
+      }
+      return true;
+    }
+    break;
+  case UNITTYPE::KFLYING:
+    return true;
+    break;
+  case UNITTYPE::KMARINE:
+    if (TERRAIN_TYPE::E::kWater == m_mapGrid[indexTile].getType())
+    {
+      if (m_mapGrid[indexTile].m_haveObtacle)
+      {
+        return false;
+      }
+      return true;
+    }
+    break;
+  case UNITTYPE::KNUMUNITTYPES:
+    return true;
+    break;
+  default:
+    return true;
+    break;
+  }
+  return false;
 }
 
 void RTSTiledMap::propagateInfluence(int tileIndex)
@@ -1303,10 +1379,10 @@ RTSTiledMap::DijkstraSearchForZones(uint32 steps)
   int actualIndX;
   int actualIndY;
   MapZone zone;
-  int r = rand() % 100 + 100;
-  int g = rand() % 100 + 100;
-  int b = rand() % 100 + 100;
-  int a = 255;
+  uint8 r = rand() % 100 + 100;
+  uint8 g = rand() % 100 + 100;
+  uint8 b = rand() % 100 + 100;
+  uint8 a = 255;
   zone.m_colorOfZone = sf::Color(r, g, b, a);
   zone.m_colorOfLimit = sf::Color(r*0.5f, g*0.5f, b*0.5f, a);
   actual->m_myZone = &zone;
@@ -1319,8 +1395,8 @@ RTSTiledMap::DijkstraSearchForZones(uint32 steps)
     actualIndX = actual->getIndexGridX();
     actualIndY = actual->getIndexGridY();
     zone.m_myTiles.push_back(actual);
-    //actual->m_myZone = &zone;
-    if (nullptr != actual)
+    actual->m_myZone = &zone;
+    if (nullptr != actual && m_dijkstraStepsDone != steps)
     {
       for (int i = 0; i < 8; i++) {
         int nuevox = actualIndX + movx[i];
@@ -1345,40 +1421,10 @@ RTSTiledMap::DijkstraSearchForZones(uint32 steps)
               m_mapGrid[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGrid[actualIndY *m_mapSize.x + actualIndX]);
               m_dijkstra.insert(&m_mapGrid[nuevoy *m_mapSize.x + nuevox]);
               ++m_dijkstraStepsDone;
-            }
-            if (m_dijkstraStepsDone ==steps )
-            {
-              m_dijkstraStepsDone = 0;
-              m_mapZones.push_back(zone);
-              for (int i = 0; i < m_mapZones[m_mapZones.size()-1].m_myTiles.size(); i++)
+              if (m_dijkstraStepsDone == steps)
               {
-                m_mapZones[m_mapZones.size() - 1].m_myTiles[i]->m_myZone = &m_mapZones[m_mapZones.size() - 1];
+                break;
               }
-              zone.m_myTiles.clear();
-              r = rand() % 100 + 100;
-              g = rand() % 100 + 100;
-              b = rand() % 100 + 100;
-              zone.m_colorOfLimit = sf::Color(r*0.5f, g*0.5f, b*0.5f, a);
-              zone.m_colorOfZone = sf::Color( r,g,b, a);
-              m_dijkstra.clear();
-              for (int i = 0; i < m_mapGrid.size(); i++)
-              {
-                m_mapGrid[i].setTentativeCost(float(INT_MAX));
-                setTileCost(i, m_mapGrid[i].getType());
-              }
-              for (int i = 0; i < m_mapGrid.size(); i++)
-              {
-                if (nullptr == m_mapGrid[i].m_myZone  && TERRAIN_TYPE::kObstacle != m_mapGrid[i].getType())
-                {
-                  m_dijkstra.insert(&m_mapGrid[i]);
-                  m_mapGrid[i].setCost(0);
-                  m_mapGrid[i].setTentativeCost(0);
-                  currentType = (TERRAIN_TYPE::E)m_mapGrid[i].getType();
-                  zone.m_terrainType = currentType;
-                  break;
-                }
-              }
-              break;
             }
           }
         }
@@ -1424,6 +1470,122 @@ RTSTiledMap::DijkstraSearchForZones(uint32 steps)
         clearSearch();
         m_bSearching = false;
         break;
+      }
+      //return;
+    }
+    actual = *m_dijkstra.begin();       // Sacamos el estado a procesar
+    m_dijkstra.erase(m_dijkstra.begin());
+  }
+}
+
+void 
+RTSTiledMap::DijkstraSearchForZonesPerFrame(uint32 steps) {
+ // actual = &m_mapGrid[0];
+  int actualIndX;
+  int actualIndY;
+  //MapZone zone;
+  //int r = rand() % 100 + 100;
+  //int g = rand() % 100 + 100;
+  //int b = rand() % 100 + 100;
+  //int a = 255;
+  //zone.m_colorOfZone = sf::Color(r, g, b, a);
+  //zone.m_colorOfLimit = sf::Color(r*0.5f, g*0.5f, b*0.5f, a);
+  //actual->m_myZone = &zone;
+  //actual->setTentativeCost(0);
+  //actual->setCost(0);
+  //TERRAIN_TYPE::E currentType = (TERRAIN_TYPE::E)actual->getType();
+  //zone.m_terrainType = currentType;
+  if (!m_bAllMapWithZones)
+  {
+    actualIndX = actual->getIndexGridX();
+    actualIndY = actual->getIndexGridY();
+    m_tmpzone.m_myTiles.push_back(actual);
+    actual->m_myZone = &m_tmpzone;
+    if (nullptr != actual && m_dijkstraStepsDone != steps)
+    {
+      for (int i = 0; i < 8; i++) {
+        int nuevox = actualIndX + movx[i];
+        int nuevoy = actualIndY + movy[i];
+        if (nuevox >= 0 && nuevox < m_mapSize.x && nuevoy >= 0 && nuevoy < m_mapSize.y)
+        {
+          if ((nullptr == m_mapGrid[nuevoy *m_mapSize.x + nuevox].m_myZone ||
+            NULL == m_mapGrid[nuevoy *m_mapSize.x + nuevox].m_myZone) &&
+            m_tmpCurrentType == m_mapGrid[nuevoy *m_mapSize.x + nuevox].getType() &&
+            TERRAIN_TYPE::kObstacle != m_mapGrid[nuevoy *m_mapSize.x + nuevox].getType())
+          {
+            float nodeCost = m_mapGrid[nuevoy *m_mapSize.x + nuevox].getTentativeCost();
+            float tentativeCost =
+              m_mapGrid[actualIndY *m_mapSize.x + actualIndX].getTentativeCost() + m_mapGrid[nuevoy *m_mapSize.x + nuevox].getCost();
+            if (tentativeCost < nodeCost) {
+              auto it = m_dijkstra.find(&m_mapGrid[nuevoy *m_mapSize.x + nuevox]);
+              if (it != m_dijkstra.end())
+              {
+                m_dijkstra.erase(it);
+              }
+              m_mapGrid[nuevoy *m_mapSize.x + nuevox].setTentativeCost(tentativeCost);
+              m_mapGrid[nuevoy *m_mapSize.x + nuevox].setParent(&m_mapGrid[actualIndY *m_mapSize.x + actualIndX]);
+              m_dijkstra.insert(&m_mapGrid[nuevoy *m_mapSize.x + nuevox]);
+              ++m_dijkstraStepsDone;
+              if (m_dijkstraStepsDone == steps)
+              {
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    if (m_dijkstra.empty())
+    {
+      m_bAllMapWithZones = true;
+      m_dijkstraStepsDone = 0;
+      m_mapZones.push_back(m_tmpzone);
+      for (int i = 0; i < m_mapZones[m_mapZones.size() - 1].m_myTiles.size(); i++)
+      {
+        m_mapZones[m_mapZones.size() - 1].m_myTiles[i]->m_myZone = &m_mapZones[m_mapZones.size() - 1];
+      }
+      m_tmpzone.m_myTiles.clear();
+      m_tmpr = rand() % 100 + 100;
+      m_tmpg = rand() % 100 + 100;
+      m_tmpb = rand() % 100 + 100;
+      m_tmpzone.m_colorOfLimit = sf::Color(m_tmpr*0.5f, m_tmpg*0.5f, m_tmpb*0.5f, m_tmpa);
+      m_tmpzone.m_colorOfZone = sf::Color(m_tmpr, m_tmpg, m_tmpb, m_tmpa);
+      m_dijkstra.clear();
+      for (int i = 0; i < m_mapGrid.size(); i++)
+      {
+        m_mapGrid[i].setTentativeCost(float(INT_MAX));
+        setTileCost(i, m_mapGrid[i].getType());
+      }
+      for (int i = 0; i < m_mapGrid.size(); i++)
+      {
+        if (nullptr == m_mapGrid[i].m_myZone && TERRAIN_TYPE::kObstacle != m_mapGrid[i].getType())
+        {
+          m_dijkstra.insert(&m_mapGrid[i]);
+          m_mapGrid[i].setCost(0);
+          m_mapGrid[i].setTentativeCost(0);
+          m_tmpCurrentType = (TERRAIN_TYPE::E) m_mapGrid[i].getType();
+          m_tmpzone.m_terrainType = m_tmpCurrentType;
+          m_bAllMapWithZones = false;
+          m_dijkstraStepsDone = 0;
+          break;
+        }
+      }
+      if (m_bAllMapWithZones)
+      {
+        clearSearch();
+        m_bSearching = false;
+        m_tmpChekingZones = false;
+        for (int i = 0; i < m_mapZones.size(); i++)
+        {
+          for (int j = 0; j < m_mapZones[i].m_myTiles.size(); j++)
+          {
+            m_mapGrid[m_mapZones[i].m_myTiles[j]->getIndex()].m_myZone = &m_mapZones[i];
+            m_mapZones[i].m_myTiles[j]->m_myZone = &m_mapZones[i];
+          }
+        }
+        checkLimitOfzones();
+        actual = nullptr;
+        return;
       }
       //return;
     }
@@ -2148,6 +2310,23 @@ void RTSTiledMap::insetObjectInTile(Object * _object, int32 tilex, int32 tiley)
   tmpTile->addObject(_object);
 }
 
+void 
+RTSTiledMap::initZones() {
+  if (m_tmpChekingZones)
+  {
+    return;
+  }
+  m_tmpChekingZones = true;
+  m_tmpzone.m_colorOfZone = sf::Color(m_tmpr, m_tmpg, m_tmpb, m_tmpa);
+  m_tmpzone.m_colorOfLimit = sf::Color(m_tmpr*0.5f, m_tmpg*0.5f, m_tmpb*0.5f, m_tmpa);
+  actual = &m_mapGrid[0];
+  actual->m_myZone = &m_tmpzone;
+  actual->setTentativeCost(0);
+  actual->setCost(0);
+  m_tmpCurrentType = (TERRAIN_TYPE::E)actual->getType();
+  m_tmpzone.m_terrainType = m_tmpCurrentType;
+}
+
 void
 RTSTiledMap::update(float deltaTime) {
   GE_UNREFERENCED_PARAMETER(deltaTime);
@@ -2236,11 +2415,25 @@ RTSTiledMap::update(float deltaTime) {
     //{
     //  returnBresenhamLinePath();
     //}
-    m_currenttimeToNext = 0.0f;
+    if (!m_tmpChekingZones)
+    {
+      m_currenttimeToNext = 0.0f;
+    }
   }
-  returnLinePath();
-  returnBresenhamLinePath();
-  for (int i = 0; i < m_mapGrid.size(); ++i)
+  if (m_tmpChekingZones)
+  {
+    if (m_currenttimeToNext > m_timeToNext)
+    {
+      DijkstraSearchForZonesPerFrame(5000);
+      m_currenttimeToNext = 0.0f;
+    }
+  }
+  else
+  {
+    returnLinePath();
+   returnBresenhamLinePath();
+  }
+  /*for (int i = 0; i < m_mapGrid.size(); ++i)
   {
     for (int j = 0; j < m_mapGrid[i].m_myObject.size(); ++j) {
       Object *tmpObject = m_mapGrid[i].m_myObject[j];
@@ -2256,7 +2449,7 @@ RTSTiledMap::update(float deltaTime) {
         break;
       }
     }
-  }
+  }*/
   //m_archerUnit.onUpdate(deltaTime,*this);
 #ifndef NDEBUG
   if (0.1<m_timeToUpdateIM)
@@ -2340,7 +2533,8 @@ RTSTiledMap::render() {
        sf::Color tmpColor;
        if (!m_bShowInfluenceMap)
        {
-         if (m_bShowZones && TERRAIN_TYPE::kObstacle != m_mapGrid[currentIndex].getType())
+         if (m_bShowZones && TERRAIN_TYPE::kObstacle != m_mapGrid[currentIndex].getType() && 
+             nullptr != m_mapGrid[currentIndex].m_myZone)
          {
            if (m_mapGrid[currentIndex].m_imLimit)
            {
@@ -2355,6 +2549,14 @@ RTSTiledMap::render() {
          else
          {
            tmpColor = m_mapGridCopy[currentIndex].getColor();
+           for (int i = 0; i < m_mapGrid[currentIndex].m_myObject.size(); i++) {
+             Object *tmpObject = m_mapGrid[currentIndex].m_myObject[i];
+             if (tmpObject->getType() == TYPEOBJECT::BUILD)
+             {
+               auto build = reinterpret_cast<BuildCreateUnits*>(tmpObject);
+               tmpColor = build->m_color;
+             }
+           }
          }
        }
        else
@@ -2570,6 +2772,7 @@ bool
 RTSTiledMap::loadFromImageFile(sf::RenderTarget* pTarget, String fileName) {
   sf::Image image;
   m_bAllMapWithZones = false;
+  m_loadingMap = true;
   for (int i = 0; i < m_mapZones.size(); ++i)
   {
     m_mapZones[i].m_myTiles.clear();
@@ -2636,6 +2839,7 @@ RTSTiledMap::loadFromImageFile(sf::RenderTarget* pTarget, String fileName) {
   }
   checkLimitOfzones();
   actual = nullptr;
+  m_loadingMap = false;
   return true;
 }
 
