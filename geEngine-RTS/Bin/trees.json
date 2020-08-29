@@ -1,0 +1,1177 @@
+{
+  "frames": {
+
+    "maple/Maple_10.png": {
+      "frame": {
+        "x": 1031,
+        "y": 203,
+        "w": 73,
+        "h": 93
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 19,
+        "w": 73,
+        "h": 93
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_11.png": {
+      "frame": {
+        "x": 634,
+        "y": 1,
+        "w": 108,
+        "h": 115
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 1,
+        "w": 108,
+        "h": 115
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_1_0.png": {
+      "frame": {
+        "x": 1111,
+        "y": 1,
+        "w": 99,
+        "h": 98
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 20,
+        "w": 99,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_2.png": {
+      "frame": {
+        "x": 1010,
+        "y": 1,
+        "w": 99,
+        "h": 104
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 13,
+        "w": 99,
+        "h": 104
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_3.png": {
+      "frame": {
+        "x": 602,
+        "y": 236,
+        "w": 99,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 5,
+        "w": 99,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_4.png": {
+      "frame": {
+        "x": 534,
+        "y": 360,
+        "w": 102,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 6,
+        "w": 102,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_5.png": {
+      "frame": {
+        "x": 1031,
+        "y": 107,
+        "w": 74,
+        "h": 94
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 19,
+        "w": 74,
+        "h": 94
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_6.png": {
+      "frame": {
+        "x": 1058,
+        "y": 402,
+        "w": 70,
+        "h": 97
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 16,
+        "w": 70,
+        "h": 97
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_7.png": {
+      "frame": {
+        "x": 854,
+        "y": 111,
+        "w": 103,
+        "h": 107
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 12,
+        "w": 103,
+        "h": 107
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_8.png": {
+      "frame": {
+        "x": 1100,
+        "y": 305,
+        "w": 102,
+        "h": 94
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 26,
+        "w": 102,
+        "h": 94
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "maple/Maple_9.png": {
+      "frame": {
+        "x": 996,
+        "y": 402,
+        "w": 60,
+        "h": 98
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 19,
+        "w": 60,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "olive/Olive_1.png": {
+      "frame": {
+        "x": 561,
+        "y": 119,
+        "w": 112,
+        "h": 115
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 2,
+        "w": 112,
+        "h": 115
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "olive/Olive_2.png": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 114,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 0,
+        "w": 114,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm/Palm_1_0.png": {
+      "frame": {
+        "x": 480,
+        "y": 242,
+        "w": 120,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 4,
+        "w": 120,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm1.png": {
+      "frame": {
+        "x": 735,
+        "y": 343,
+        "w": 78,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 4,
+        "w": 78,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm2.png": {
+      "frame": {
+        "x": 906,
+        "y": 334,
+        "w": 88,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 9,
+        "w": 88,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm3.png": {
+      "frame": {
+        "x": 117,
+        "y": 1,
+        "w": 56,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 0,
+        "w": 56,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm4.png": {
+      "frame": {
+        "x": 1,
+        "y": 245,
+        "w": 94,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 94,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm5.png": {
+      "frame": {
+        "x": 1,
+        "y": 123,
+        "w": 111,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 111,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm6.png": {
+      "frame": {
+        "x": 175,
+        "y": 1,
+        "w": 87,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 1,
+        "w": 87,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "palm2/palm7.png": {
+      "frame": {
+        "x": 1,
+        "y": 367,
+        "w": 85,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 0,
+        "w": 85,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_10.png": {
+      "frame": {
+        "x": 1111,
+        "y": 101,
+        "w": 99,
+        "h": 98
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 13,
+        "w": 99,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_11.png": {
+      "frame": {
+        "x": 764,
+        "y": 114,
+        "w": 88,
+        "h": 109
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 9,
+        "w": 88,
+        "h": 109
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_1_1.png": {
+      "frame": {
+        "x": 703,
+        "y": 232,
+        "w": 94,
+        "h": 109
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 94,
+        "h": 109
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_2_1.png": {
+      "frame": {
+        "x": 833,
+        "y": 1,
+        "w": 80,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 6,
+        "w": 80,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_3_0.png": {
+      "frame": {
+        "x": 907,
+        "y": 220,
+        "w": 85,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 8,
+        "w": 85,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_4_0.png": {
+      "frame": {
+        "x": 744,
+        "y": 1,
+        "w": 87,
+        "h": 111
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 4,
+        "w": 87,
+        "h": 111
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_5.png": {
+      "frame": {
+        "x": 959,
+        "y": 109,
+        "w": 70,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 6,
+        "w": 70,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_5_0.png": {
+      "frame": {
+        "x": 959,
+        "y": 109,
+        "w": 70,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 6,
+        "w": 70,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_6.png": {
+      "frame": {
+        "x": 1107,
+        "y": 201,
+        "w": 102,
+        "h": 102
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 11,
+        "w": 102,
+        "h": 102
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_7.png": {
+      "frame": {
+        "x": 915,
+        "y": 1,
+        "w": 93,
+        "h": 106
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 10,
+        "w": 93,
+        "h": 106
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_8.png": {
+      "frame": {
+        "x": 815,
+        "y": 334,
+        "w": 89,
+        "h": 106
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 6,
+        "w": 89,
+        "h": 106
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine/ScotsPine_9.png": {
+      "frame": {
+        "x": 799,
+        "y": 225,
+        "w": 106,
+        "h": 107
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 5,
+        "w": 106,
+        "h": 107
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine2/pine2.png": {
+      "frame": {
+        "x": 487,
+        "y": 120,
+        "w": 72,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 2,
+        "w": 72,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine2/pine2b.png": {
+      "frame": {
+        "x": 413,
+        "y": 1,
+        "w": 70,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 0,
+        "w": 70,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine2/pine2c.png": {
+      "frame": {
+        "x": 343,
+        "y": 1,
+        "w": 68,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 19,
+        "y": 0,
+        "w": 68,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine3/tree3.png": {
+      "frame": {
+        "x": 331,
+        "y": 243,
+        "w": 70,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 0,
+        "w": 70,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine3/tree3b.png": {
+      "frame": {
+        "x": 187,
+        "y": 122,
+        "w": 77,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 0,
+        "w": 77,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine3/tree3c.png": {
+      "frame": {
+        "x": 88,
+        "y": 367,
+        "w": 74,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 0,
+        "w": 74,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine4/tree1.png": {
+      "frame": {
+        "x": 411,
+        "y": 122,
+        "w": 74,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 0,
+        "w": 74,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine4/tree1b.png": {
+      "frame": {
+        "x": 403,
+        "y": 243,
+        "w": 75,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 1,
+        "w": 75,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine4/tree1c.png": {
+      "frame": {
+        "x": 164,
+        "y": 367,
+        "w": 80,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 0,
+        "w": 80,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine4/tree1d.png": {
+      "frame": {
+        "x": 255,
+        "y": 243,
+        "w": 74,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 0,
+        "w": 74,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "pine4/tree1e.png": {
+      "frame": {
+        "x": 266,
+        "y": 122,
+        "w": 71,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 0,
+        "w": 71,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snow_pine/Snow_ScotsPine_1.png": {
+      "frame": {
+        "x": 638,
+        "y": 350,
+        "w": 95,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 95,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snow_pine/Snow_ScotsPine_2.png": {
+      "frame": {
+        "x": 996,
+        "y": 298,
+        "w": 102,
+        "h": 102
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 11,
+        "w": 102,
+        "h": 102
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snow_pine/Snow_ScotsPine_3.png": {
+      "frame": {
+        "x": 675,
+        "y": 118,
+        "w": 87,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 3,
+        "w": 87,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/pine2_snow.png": {
+      "frame": {
+        "x": 560,
+        "y": 1,
+        "w": 72,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 0,
+        "w": 72,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/pine2b_snow.png": {
+      "frame": {
+        "x": 339,
+        "y": 122,
+        "w": 70,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 0,
+        "w": 70,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/pine2c_snow.png": {
+      "frame": {
+        "x": 397,
+        "y": 364,
+        "w": 67,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 19,
+        "y": 0,
+        "w": 67,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/pine2d_snow.png": {
+      "frame": {
+        "x": 466,
+        "y": 363,
+        "w": 66,
+        "h": 117
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 20,
+        "y": 0,
+        "w": 66,
+        "h": 117
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree1_snow.png": {
+      "frame": {
+        "x": 485,
+        "y": 1,
+        "w": 73,
+        "h": 117
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 1,
+        "w": 73,
+        "h": 117
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree1b_snow.png": {
+      "frame": {
+        "x": 246,
+        "y": 366,
+        "w": 76,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 0,
+        "w": 76,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree1c_snow.png": {
+      "frame": {
+        "x": 173,
+        "y": 245,
+        "w": 80,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 0,
+        "w": 80,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree1d_snow.png": {
+      "frame": {
+        "x": 97,
+        "y": 245,
+        "w": 74,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 0,
+        "w": 74,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree1e_snow.png": {
+      "frame": {
+        "x": 324,
+        "y": 364,
+        "w": 71,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 0,
+        "w": 71,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree3_snow.png": {
+      "frame": {
+        "x": 114,
+        "y": 123,
+        "w": 71,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 0,
+        "w": 71,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    },
+    "snowy_pine2/tree3b_snow.png": {
+      "frame": {
+        "x": 264,
+        "y": 1,
+        "w": 77,
+        "h": 119
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 0,
+        "w": 77,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 120
+      }
+    }
+  },
+  "meta": {
+    "app": "http://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "trees.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1211,
+      "h": 501
+    },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:318209cb729072216b5eb95370369934:5d25aafc9feb47bf8d01dc7a2ca7e27f:ead410b59bd7de5235399502333842d0$"
+  }
+}
